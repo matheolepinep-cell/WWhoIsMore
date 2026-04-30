@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who's More Famous? 🌍</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --card-a: linear-gradient(135deg, #7c3aed, #db2777);
+    --card-b: linear-gradient(135deg, #0891b2, #16a34a);
+    --gold: #fbbf24;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --surface: #1e1b4b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG animated */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(8,145,178,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(219,39,119,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease;
+  }
+  header h1 {
+    font-family: 'Boogaloo', cursive;
+    font-size: clamp(2rem, 6vw, 3rem);
+    background: linear-gradient(90deg, #a78bfa, #f472b6, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    padding: 10px 24px;
+    margin-bottom: 28px;
+    backdrop-filter: blur(10px);
+    animation: fadeDown 0.6s ease 0.1s both;
+  }
+  .score-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .score-item span:first-child { font-size: 1.2rem; }
+  .score-val { color: var(--gold); font-size: 1.1rem; }
+  .streak-val { color: #f472b6; font-size: 1.1rem; }
+  .streak-val.pulse {
+    animation: pulse 0.4s ease;
+  }
+
+  /* QUESTION COUNTER */
+  .question-counter {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* VERSUS */
+  .versus-text {
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.1rem;
+    color: var(--gold);
+    text-align: center;
+    margin: 12px 0;
+    opacity: 0.9;
+  }
+
+  /* CARDS */
+  .cards-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 480px) {
+    .cards-wrapper { grid-template-columns: 1fr; gap: 12px; }
+    .versus-text { display: none; }
+  }
+
+  .card {
+    border-radius: 20px;
+    padding: 32px 20px;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeUp 0.5s ease both;
+    border: 2px solid transparent;
+  }
+  .card:nth-child(1) { background: var(--card-a); animation-delay: 0.1s; }
+  .card:nth-child(3) { background: var(--card-b); animation-delay: 0.2s; }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s ease;
+    border-radius: inherit;
+  }
+  .card:hover::before { background: rgba(255,255,255,0.08); }
+  .card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+  .card:active { transform: scale(0.97); }
+
+  .card.disabled { cursor: default; pointer-events: none; }
+  .card.winner {
+    border-color: var(--gold);
+    box-shadow: 0 0 30px rgba(251,191,36,0.4);
+    animation: winPulse 0.5s ease;
+  }
+  .card.loser { filter: brightness(0.5) saturate(0.3); }
+
+  .card-emoji { font-size: 3.5rem; margin-bottom: 12px; display: block; line-height: 1; }
+  .card-name {
+    font-family: 'Boogaloo', cursive;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 400;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    line-height: 1.2;
+  }
+  .card-category {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* SCORE REVEAL on card */
+  .score-reveal {
+    margin-top: 14px;
+    font-size: 2rem;
+    font-family: 'Boogaloo', cursive;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .score-reveal.show { opacity: 1; transform: scale(1); }
+  .score-label { font-size: 0.75rem; opacity: 0.8; display: block; margin-top: 2px; }
+
+  /* RESULT BOX */
+  .result-box {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease 0.3s;
+  }
+  .result-box.show { opacity: 1; transform: translateY(0); }
+
+  .result-status {
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+  .result-status.correct { color: #4ade80; }
+  .result-status.wrong { color: #f87171; }
+
+  .result-explanation {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    min-height: 40px;
+  }
+
+  .loading-dots span {
+    display: inline-block;
+    animation: dotBounce 1.2s infinite;
+    font-size: 1.5rem;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  /* NEXT BUTTON */
+  .btn-next {
+    background: linear-gradient(135deg, #7c3aed, #db2777);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 40px;
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    animation: none;
+    display: none;
+  }
+  .btn-next.show {
+    display: block;
+    opacity: 1;
+    animation: fadeUp 0.4s ease 0.6s both;
+  }
+  .btn-next:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.5); }
+
+  /* GAME OVER */
+  #game-over {
+    display: none;
+    text-align: center;
+    animation: fadeUp 0.6s ease;
+    width: 100%;
+  }
+  #game-over h2 {
+    font-family: 'Boogaloo', cursive;
+    font-size: 3rem;
+    background: linear-gradient(90deg, #fbbf24, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .final-score {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .final-score strong { color: var(--gold); font-size: 1.4rem; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px 8px;
+  }
+  .stat-card .stat-num {
+    font-family: 'Boogaloo', cursive;
+    font-size: 2rem;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-card .stat-label { font-size: 0.8rem; color: var(--muted); }
+
+  .btn-restart {
+    background: linear-gradient(135deg, #0891b2, #16a34a);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 48px;
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-restart:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(8,145,178,0.5); }
+
+  /* CONFETTI */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+  @keyframes winPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  @keyframes dotBounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-8px); }
+  }
+  @keyframes confettiFall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  @keyframes slideOut {
+    to { opacity: 0; transform: translateX(-60px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🌍 Who's More Famous?</h1>
+    <p>Devine lequel est le plus connu dans le monde !</p>
+  </header>
+
+  <div class="score-bar">
+    <div class="score-item">
+      <span>⭐</span>
+      <span>Score</span>
+      <span class="score-val" id="score-display">0</span>
+    </div>
+    <div class="score-item">
+      <span>🔥</span>
+      <span>Série</span>
+      <span class="streak-val" id="streak-display">0</span>
+    </div>
+    <div class="score-item">
+      <span>✅</span>
+      <span id="correct-display">0</span>
+      <span style="color:var(--muted)">/ 10</span>
+    </div>
+  </div>
+
+  <div id="game-area">
+    <div class="question-counter" id="q-counter">Question 1 / 10</div>
+
+    <div class="cards-wrapper" id="cards-wrapper">
+      <div class="card" id="card-a" onclick="choose('A')">
+        <span class="card-emoji" id="emoji-a">🎤</span>
+        <div class="card-name" id="name-a">...</div>
+        <div class="card-category" id="cat-a"></div>
+        <div class="score-reveal" id="score-a"></div>
+      </div>
+
+      <div class="versus-text">VS</div>
+
+      <div class="card" id="card-b" onclick="choose('B')">
+        <span class="card-emoji" id="emoji-b">🍞</span>
+        <div class="card-name" id="name-b">...</div>
+        <div class="card-category" id="cat-b"></div>
+        <div class="score-reveal" id="score-b"></div>
+      </div>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div class="result-status" id="result-status"></div>
+      <div class="result-explanation" id="result-explanation">
+        <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
+      </div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Suivant →</button>
+  </div>
+
+  <div id="game-over">
+    <h2>🏆 Game Over !</h2>
+    <div class="final-score">
+      Score final : <strong id="final-score-val">0</strong> points
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num" id="stat-correct">0</span>
+        <span class="stat-label">Bonnes réponses</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="stat-streak">0</span>
+        <span class="stat-label">Meilleure série</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="stat-pct">0%</span>
+        <span class="stat-label">Précision</span>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restartGame()">🔄 Rejouer</button>
+  </div>
+</div>
+
+<script>
+// =====================
+// DONNÉES : 60 paires
+// =====================
+const ALL_PAIRS = [
+  { a:{name:"Michael Jackson",emoji:"🎤",cat:"Célébrité"}, b:{name:"Le Pain",emoji:"🍞",cat:"Nourriture"}, winner:"B", sA:78, sB:97, exp:"Le pain est consommé quotidiennement par presque 8 milliards de personnes. MJ a vendu 750 millions d'albums — impressionnant, mais statistiquement moins de gens ont écouté Thriller aujourd'hui que mangé du pain." },
+  { a:{name:"Beyoncé",emoji:"👑",cat:"Célébrité"}, b:{name:"Le Riz",emoji:"🍚",cat:"Nourriture"}, winner:"B", sA:74, sB:96, exp:"Le riz nourrit plus de la moitié de l'humanité chaque jour. Beyoncé est une icône mondiale, mais le riz est le vrai roi de la planète." },
+  { a:{name:"La Pizza",emoji:"🍕",cat:"Nourriture"}, b:{name:"Shakespeare",emoji:"📜",cat:"Personnage"}, winner:"A", sA:88, sB:72, exp:"Shakespeare est étudié dans presque toutes les écoles du monde, mais la pizza est commandée 5 milliards de fois par an. La pepperoni bat Hamlet." },
+  { a:{name:"Internet",emoji:"🌐",cat:"Concept"}, b:{name:"La Joconde",emoji:"🖼️",cat:"Art"}, winner:"A", sA:95, sB:82, exp:"La Joconde est le tableau le plus célèbre du monde avec 8 millions de visiteurs annuels. Mais Internet touche 5 milliards de personnes chaque jour. Pas de match." },
+  { a:{name:"L'Eau",emoji:"💧",cat:"Élément"}, b:{name:"Harry Potter",emoji:"🧙",cat:"Fiction"}, winner:"A", sA:100, sB:85, exp:"Harry Potter est connu par 1 milliard de fans. L'eau, elle, est connue par 8 milliards d'humains ET tous les animaux. L'eau gagne à l'unanimité." },
+  { a:{name:"Cristiano Ronaldo",emoji:"⚽",cat:"Sportif"}, b:{name:"La Bible",emoji:"📖",cat:"Livre"}, winner:"B", sA:89, sB:95, exp:"Ronaldo a 900 millions de followers. La Bible a été imprimée à 6 milliards d'exemplaires et traduite en 3000 langues. CR7 doit encore progresser." },
+  { a:{name:"McDonald's",emoji:"🍔",cat:"Marque"}, b:{name:"La Tour Eiffel",emoji:"🗼",cat:"Monument"}, winner:"A", sA:92, sB:87, exp:"La Tour Eiffel est visitée par 7 millions de personnes par an. McDonald's sert 70 millions de clients par JOUR dans 100 pays. Les frites l'emportent." },
+  { a:{name:"L'Amour",emoji:"❤️",cat:"Concept"}, b:{name:"L'iPhone",emoji:"📱",cat:"Technologie"}, winner:"A", sA:99, sB:84, exp:"L'iPhone est possédé par 1,5 milliard de personnes. L'amour, lui, est ressenti par 100% de l'humanité depuis l'aube des temps. Pas de comparaison." },
+  { a:{name:"Elon Musk",emoji:"🚀",cat:"Célébrité"}, b:{name:"La Lune",emoji:"🌙",cat:"Astre"}, winner:"B", sA:79, sB:100, exp:"Elon Musk fait la une partout, mais la Lune est visible par toute l'humanité depuis 300 000 ans. Neil Armstrong ou pas, la Lune est imbattable." },
+  { a:{name:"Minecraft",emoji:"⛏️",cat:"Jeu vidéo"}, b:{name:"La Guerre de Troie",emoji:"🏛️",cat:"Histoire"}, winner:"A", sA:81, sB:68, exp:"La Guerre de Troie est étudiée depuis 3000 ans. Mais Minecraft a 140 millions de joueurs actifs et est le jeu le plus vendu de l'histoire. Les blocs gagnent." },
+  { a:{name:"Le Café",emoji:"☕",cat:"Boisson"}, b:{name:"Mozart",emoji:"🎻",cat:"Célébrité"}, winner:"A", sA:91, sB:76, exp:"Mozart a composé 626 œuvres immortelles. Mais 2,5 milliards de tasses de café sont bues chaque jour dans le monde. Le café se réveille avant tout le monde." },
+  { a:{name:"Apple",emoji:"🍎",cat:"Marque"}, b:{name:"Napoléon",emoji:"👑",cat:"Histoire"}, winner:"A", sA:90, sB:79, exp:"Napoléon a marqué l'histoire de l'Europe entière. Mais Apple est la marque la plus reconnue au monde avec 2 milliards d'appareils actifs. La pomme écrase Waterloo." },
+  { a:{name:"Taylor Swift",emoji:"🎸",cat:"Célébrité"}, b:{name:"Le Soleil",emoji:"☀️",cat:"Astre"}, winner:"B", sA:82, sB:100, exp:"Taylor Swift est l'artiste la plus streamée de l'époque. Mais le Soleil est connu depuis 4,6 milliards d'années par toute vie sur Terre. Taylor, tu reviendras." },
+  { a:{name:"Coca-Cola",emoji:"🥤",cat:"Boisson"}, b:{name:"Albert Einstein",emoji:"🧠",cat:"Célébrité"}, winner:"A", sA:94, sB:85, exp:"Einstein est l'un des scientifiques les plus cités de l'histoire. Mais Coca-Cola est vendu dans 200 pays et bu 2 milliards de fois par jour. La physique quantique perd." },
+  { a:{name:"Le Football",emoji:"⚽",cat:"Sport"}, b:{name:"Aristote",emoji:"📚",cat:"Histoire"}, winner:"A", sA:92, sB:71, exp:"Aristote a fondé la philosophie occidentale — énorme. Mais 4 milliards de personnes suivent le football, le sport le plus populaire du monde. But !" },
+  { a:{name:"Batman",emoji:"🦇",cat:"Fiction"}, b:{name:"Le Feu",emoji:"🔥",cat:"Élément"}, winner:"B", sA:83, sB:99, exp:"Batman est connu dans 190 pays grâce à DC Comics. Mais le feu est utilisé par l'humanité depuis 1 million d'années. Alfred ne peut rien contre ça." },
+  { a:{name:"Mickey Mouse",emoji:"🐭",cat:"Fiction"}, b:{name:"Confucius",emoji:"🧧",cat:"Histoire"}, winner:"A", sA:86, sB:74, exp:"Confucius est vénéré par des centaines de millions de personnes en Asie. Mais Mickey Mouse est reconnu par 90% des enfants du monde entier. Souris 1-0 Sagesse." },
+  { a:{name:"La Croix-Rouge",emoji:"🏥",cat:"Organisation"}, b:{name:"Cléopâtre",emoji:"👸",cat:"Histoire"}, winner:"A", sA:88, sB:78, exp:"Cléopâtre est l'une des figures historiques les plus connues. Mais la Croix-Rouge opère dans 192 pays et son symbole est reconnu universellement. Humanité > Égypte." },
+  { a:{name:"Netflix",emoji:"🎬",cat:"Marque"}, b:{name:"Jules César",emoji:"🏛️",cat:"Histoire"}, winner:"A", sA:87, sB:75, exp:"Jules César a conquis l'Europe. Netflix a 260 millions d'abonnés et a conquis les canapés du monde entier. 'Et tu, César ?' — Tu regardes toujours du Netflix." },
+  { a:{name:"Le Chien",emoji:"🐕",cat:"Animal"}, b:{name:"Platon",emoji:"📜",cat:"Histoire"}, winner:"A", sA:95, sB:70, exp:"Platon est le philosophe le plus étudié au monde. Mais le chien est le meilleur ami de l'homme depuis 15 000 ans dans toutes les cultures. Aboie, Platon." },
+  { a:{name:"Google",emoji:"🔍",cat:"Marque"}, b:{name:"La Croix",emoji:"✝️",cat:"Symbole"}, winner:"A", sA:93, sB:88, exp:"La croix est le symbole religieux le plus répandu depuis 2000 ans. Mais Google est utilisé par 4,3 milliards de personnes — il répond même à 'c'est quoi une croix'." },
+  { a:{name:"SpongeBob",emoji:"🧽",cat:"Fiction"}, b:{name:"Socrate",emoji:"🏛️",cat:"Histoire"}, winner:"A", sA:84, sB:72, exp:"Socrate a inventé la pensée critique occidentale. Mais Bob l'Éponge est diffusé dans 209 pays depuis 25 ans. Est-ce que c'est bien beau ? Oui, oui, oui !" },
+  { a:{name:"La Musique",emoji:"🎵",cat:"Concept"}, b:{name:"Newton",emoji:"🍎",cat:"Célébrité"}, winner:"A", sA:100, sB:80, exp:"Newton a découvert la gravité — sans lui, pas de physique moderne. Mais la musique existe dans TOUTES les cultures humaines depuis la préhistoire. Universel imbattable." },
+  { a:{name:"Le Chat",emoji:"🐈",cat:"Animal"}, b:{name:"Copernic",emoji:"🔭",cat:"Histoire"}, winner:"A", sA:93, sB:65, exp:"Copernic a prouvé que la Terre tourne autour du Soleil — révolutionnaire. Mais il y a 600 millions de chats domestiques et 6 milliards de vues de vidéos de chats par jour. Miaaou." },
+  { a:{name:"YouTube",emoji:"📺",cat:"Marque"}, b:{name:"Léonard de Vinci",emoji:"🎨",cat:"Histoire"}, winner:"A", sA:91, sB:83, exp:"Léonard de Vinci est le génie universel par excellence. Mais YouTube touche 2,7 milliards d'utilisateurs qui regardent 1 milliard d'heures par jour. La Joconde en GIF." },
+  { a:{name:"Le Vin",emoji:"🍷",cat:"Boisson"}, b:{name:"Sigmund Freud",emoji:"🛋️",cat:"Célébrité"}, winner:"A", sA:89, sB:77, exp:"Freud a révolutionné la psychologie. Mais le vin est produit depuis 8000 ans dans 60 pays et bu dans absolument tous les contextes culturels. En-semble à la santé." },
+  { a:{name:"Amazon",emoji:"📦",cat:"Marque"}, b:{name:"Gengis Khan",emoji:"⚔️",cat:"Histoire"}, winner:"A", sA:88, sB:76, exp:"Gengis Khan a conquis le plus grand empire terrestre de l'histoire. Amazon livre dans 100 pays et a 300 millions de clients. La livraison en 2 jours bat les chevaux." },
+  { a:{name:"Le Vélo",emoji:"🚲",cat:"Transport"}, b:{name:"Voltaire",emoji:"✍️",cat:"Histoire"}, winner:"A", sA:90, sB:71, exp:"Voltaire est le phare des Lumières. Mais il y a 2 milliards de vélos dans le monde — c'est le moyen de transport le plus utilisé sur Terre. Candide préférerait le vélo." },
+  { a:{name:"WhatsApp",emoji:"💬",cat:"Marque"}, b:{name:"Marco Polo",emoji:"🧭",cat:"Histoire"}, winner:"A", sA:87, sB:72, exp:"Marco Polo a ouvert la route de la Soie. WhatsApp a 2 milliards d'utilisateurs actifs quotidiens. Le message lu mais pas répondu arrive quand même plus vite." },
+  { a:{name:"La Mort",emoji:"💀",cat:"Concept"}, b:{name:"Eiffel Tower",emoji:"🗼",cat:"Monument"}, winner:"A", sA:100, sB:87, exp:"La Tour Eiffel est le monument le plus photographié du monde. Mais la mort concerne 100% des êtres vivants depuis l'origine de la vie. Universelle par définition." },
+  { a:{name:"Superman",emoji:"🦸",cat:"Fiction"}, b:{name:"Magellan",emoji:"⛵",cat:"Histoire"}, winner:"A", sA:86, sB:69, exp:"Magellan a réalisé le premier tour du monde. Superman existe dans les comics depuis 1938 et est connu par des milliards de personnes. L'homme d'acier rase les exploits." },
+  { a:{name:"La Guitare",emoji:"🎸",cat:"Instrument"}, b:{name:"Pythagore",emoji:"📐",cat:"Histoire"}, winner:"A", sA:88, sB:70, exp:"Pythagore a inventé une formule que tout le monde a apprise à l'école. Mais la guitare est l'instrument le plus joué sur Terre avec 800 millions de guitaristes. Do ré mi." },
+  { a:{name:"Nike",emoji:"👟",cat:"Marque"}, b:{name:"Homère",emoji:"📖",cat:"Histoire"}, winner:"A", sA:89, sB:68, exp:"Homère a écrit l'Iliade et l'Odyssée — fondements de la civilisation occidentale. Nike a 1 milliard de produits vendus par an dans 170 pays. Just do it, Homère." },
+  { a:{name:"Le Smartphone",emoji:"📱",cat:"Technologie"}, b:{name:"Avicenne",emoji:"🏥",cat:"Histoire"}, winner:"A", sA:92, sB:62, exp:"Avicenne est le père de la médecine moderne — une gloire absolue. Mais 6 milliards de personnes ont un smartphone en 2024. Le médecin et son téléphone." },
+  { a:{name:"Instagram",emoji:"📸",cat:"Marque"}, b:{name:"Napoléon",emoji:"👑",cat:"Histoire"}, winner:"A", sA:85, sB:79, exp:"Napoléon a réorganisé l'Europe. Instagram a 2 milliards d'utilisateurs qui postent 100 millions de photos par jour. Le selfie bat Austerlitz." },
+  { a:{name:"Le Lait",emoji:"🥛",cat:"Nourriture"}, b:{name:"Descartes",emoji:"🧮",cat:"Histoire"}, winner:"A", sA:94, sB:73, exp:"Descartes a dit 'Je pense donc je suis'. Le lait est consommé par des milliards de personnes et mammifères depuis des millions d'années. Je bois donc je suis." },
+  { a:{name:"TikTok",emoji:"🎵",cat:"Marque"}, b:{name:"Alexandre le Grand",emoji:"⚔️",cat:"Histoire"}, winner:"A", sA:83, sB:76, exp:"Alexandre a conquis la moitié du monde connu en 13 ans. TikTok a 1,5 milliard d'utilisateurs actifs. La tendance #alexandresupertop n'a pas encore été faite." },
+  { a:{name:"Le Sucre",emoji:"🍬",cat:"Nourriture"}, b:{name:"Darwin",emoji:"🐒",cat:"Célébrité"}, winner:"A", sA:95, sB:78, exp:"Darwin a expliqué l'évolution des espèces. Le sucre est consommé par 100% de l'humanité — c'est même une addiction mondiale. La sélection naturelle préfère le sucre." },
+  { a:{name:"La Croix Gammée",emoji:"☮️",cat:"Symbole"}, b:{name:"Picasso",emoji:"🎨",cat:"Célébrité"}, winner:"B", sA:70, sB:85, exp:"La croix gammée évoque d'abord le nazisme pour beaucoup. Picasso est l'artiste le plus coté et reconnu du 20e siècle avec une œuvre universelle et positive." },
+  { a:{name:"Le Tennis",emoji:"🎾",cat:"Sport"}, b:{name:"Einstein",emoji:"🧠",cat:"Célébrité"}, winner:"B", sA:74, sB:85, exp:"Le tennis est suivi par des centaines de millions de fans. Mais Einstein est la figure scientifique la plus connue au monde — son visage est reconnu même sans contexte." },
+  { a:{name:"Facebook",emoji:"👍",cat:"Marque"}, b:{name:"Bouddha",emoji:"☮️",cat:"Histoire"}, winner:"A", sA:88, sB:83, exp:"Bouddha est vénéré par 500 millions de personnes et admiré par des milliards. Facebook a 3 milliards d'utilisateurs actifs. Zuckerberg a battu l'éveil — pour l'instant." },
+  { a:{name:"La Télévision",emoji:"📺",cat:"Technologie"}, b:{name:"Charlemagne",emoji:"👑",cat:"Histoire"}, winner:"A", sA:93, sB:74, exp:"Charlemagne a unifié l'Europe. La télévision est présente dans 1,7 milliard de foyers depuis 70 ans. Il y a une télé partout où il y a l'électricité." },
+  { a:{name:"Le Cheval",emoji:"🐴",cat:"Animal"}, b:{name:"Colomb",emoji:"⛵",cat:"Histoire"}, winner:"A", sA:90, sB:77, exp:"Colomb a découvert l'Amérique. Mais le cheval a changé l'histoire de TOUTES les civilisations sur 5000 ans. Sans cheval, Colomb ne serait même pas parti." },
+  { a:{name:"Le Dollar",emoji:"💵",cat:"Concept"}, b:{name:"Gandhi",emoji:"☮️",cat:"Célébrité"}, winner:"A", sA:91, sB:82, exp:"Gandhi est l'une des figures morales les plus admirées au monde. Le dollar est la monnaie de réserve mondiale utilisée dans 160 pays. L'argent parle plus fort." },
+  { a:{name:"Le Kung-Fu",emoji:"🥋",cat:"Sport"}, b:{name:"Cézanne",emoji:"🎨",cat:"Célébrité"}, winner:"A", sA:82, sB:64, exp:"Cézanne est considéré comme le père de l'art moderne. Mais le kung-fu est pratiqué dans 120 pays et popularisé par Bruce Lee et des milliers de films. Hi-ya !" },
+  { a:{name:"Les Dents",emoji:"🦷",cat:"Corps"}, b:{name:"Rembrandt",emoji:"🖌️",cat:"Célébrité"}, winner:"A", sA:100, sB:70, exp:"Rembrandt est un maître de la peinture, admiré depuis 400 ans. Mais les dents, tout le monde en a (ou en a eu). Universel et personnel à la fois." },
+  { a:{name:"Tesla",emoji:"⚡",cat:"Marque"}, b:{name:"Voltaire",emoji:"✍️",cat:"Histoire"}, winner:"A", sA:80, sB:71, exp:"Voltaire a illuminé le siècle des Lumières. Tesla illumine la route avec ses voitures électriques en croissance mondiale. L'éclair bat la plume." },
+  { a:{name:"Pokémon",emoji:"⚡",cat:"Fiction"}, b:{name:"Jules Verne",emoji:"📚",cat:"Célébrité"}, winner:"A", sA:87, sB:74, exp:"Jules Verne a prédit le futur avec 50 ans d'avance. Pokémon a 480 millions de jeux vendus et une génération entière obsédée. Attrapez-les tous, Jules." },
+  { a:{name:"Le Mariage",emoji:"💍",cat:"Concept"}, b:{name:"Archimède",emoji:"🛁",cat:"Histoire"}, winner:"A", sA:96, sB:71, exp:"Archimède a inventé la poussée hydrostatique dans son bain. Le mariage existe dans TOUTES les cultures humaines connues depuis 4000 ans. Eurêka — le mariage gagne." },
+  { a:{name:"La Nuit",emoji:"🌙",cat:"Nature"}, b:{name:"Léonard de Vinci",emoji:"🎨",cat:"Célébrité"}, winner:"A", sA:100, sB:83, exp:"De Vinci est l'esprit universel le plus admiré. Mais la nuit arrive chaque jour pour 8 milliards de personnes et 4 milliards d'années d'histoire. Personne n'échappe à la nuit." },
+  { a:{name:"Red Bull",emoji:"🐂",cat:"Boisson"}, b:{name:"Voltaire",emoji:"✍️",cat:"Histoire"}, winner:"A", sA:78, sB:71, exp:"Voltaire écrivait Candide à une vitesse folle (peut-être sous caféine). Red Bull est vendu dans 175 pays à raison de 12 milliards de canettes par an. Ça donne des ailes, pas des Lumières." },
+  { a:{name:"La Peur",emoji:"😱",cat:"Concept"}, b:{name:"Beethoven",emoji:"🎻",cat:"Célébrité"}, winner:"A", sA:100, sB:81, exp:"Beethoven a composé la 9e symphonie en étant sourd — une prouesse absolue. La peur est l'émotion universelle partagée par TOUTE vie animale. Même Beethoven avait peur." },
+  { a:{name:"Le Sushi",emoji:"🍣",cat:"Nourriture"}, b:{name:"Cléopâtre",emoji:"👸",cat:"Histoire"}, winner:"A", sA:83, sB:78, exp:"Cléopâtre est l'une des reines les plus mythiques de l'histoire. Mais le sushi est mangé dans 120 pays et est devenu l'un des plats les plus populaires au monde. Itadakimasu." },
+  { a:{name:"Le Sourire",emoji:"😊",cat:"Concept"}, b:{name:"Rembrandt",emoji:"🖌️",cat:"Célébrité"}, winner:"A", sA:100, sB:70, exp:"Rembrandt est un génie reconnu dans tous les musées du monde. Mais le sourire est la seule expression faciale comprise de la même façon dans toutes les cultures humaines. Universel." },
+  { a:{name:"Facebook",emoji:"👍",cat:"Marque"}, b:{name:"La Croix-Rouge",emoji:"🏥",cat:"Organisation"}, winner:"A", sA:88, sB:87, exp:"La Croix-Rouge est présente partout en cas de crise depuis 160 ans. Facebook connecte 3 milliards de personnes quotidiennement. Un like vaut une vie sauvée ? Probablement pas." },
+  { a:{name:"Le Kung-Fu Panda",emoji:"🐼",cat:"Fiction"}, b:{name:"Socrate",emoji:"🏛️",cat:"Histoire"}, winner:"A", sA:82, sB:72, exp:"Socrate est le fondateur de la philosophie occidentale. Kung Fu Panda a rapporté 2 milliards de dollars et est connu de tous les enfants du monde. Skadoosh." },
+  { a:{name:"L'Or",emoji:"🥇",cat:"Élément"}, b:{name:"Dante",emoji:"📜",cat:"Histoire"}, winner:"A", sA:96, sB:70, exp:"Dante a écrit la Divine Comédie, sommet de la littérature mondiale. L'or est convoité par toutes les civilisations depuis 5000 ans sur tous les continents. L'or brille plus fort." },
+  { a:{name:"Le Foot Américain",emoji:"🏈",cat:"Sport"}, b:{name:"Leibniz",emoji:"📐",cat:"Histoire"}, winner:"A", sA:74, sB:62, exp:"Leibniz a inventé le calcul différentiel. Le Super Bowl est regardé par 115 millions d'Américains — la plus grande audience TV annuelle. Le touchdown bat l'intégrale." },
+  { a:{name:"Le Rap",emoji:"🎤",cat:"Musique"}, b:{name:"Copernic",emoji:"🔭",cat:"Histoire"}, winner:"A", sA:85, sB:65, exp:"Copernic a révolutionné notre vision de l'univers. Le rap est le genre musical le plus écouté au monde depuis 2017. Yo, Copernic, t'as pas de featuring." },
+];
+
+// =====================
+// ÉTAT DU JEU
+// =====================
+let pairs = [];
+let currentPair = null;
+let questionIndex = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let correctCount = 0;
+let answered = false;
+const TOTAL_QUESTIONS = 10;
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function initGame() {
+  pairs = shuffle(ALL_PAIRS).slice(0, TOTAL_QUESTIONS);
+  questionIndex = 0;
+  score = 0;
+  streak = 0;
+  bestStreak = 0;
+  correctCount = 0;
+  answered = false;
+
+  document.getElementById('game-area').style.display = 'flex';
+  document.getElementById('game-area').style.flexDirection = 'column';
+  document.getElementById('game-area').style.alignItems = 'center';
+  document.getElementById('game-area').style.width = '100%';
+  document.getElementById('game-over').style.display = 'none';
+
+  updateScoreDisplay();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  currentPair = pairs[questionIndex];
+
+  // Reset UI
+  const cardA = document.getElementById('card-a');
+  const cardB = document.getElementById('card-b');
+  cardA.className = 'card';
+  cardB.className = 'card';
+  cardA.onclick = () => choose('A');
+  cardB.onclick = () => choose('B');
+
+  document.getElementById('score-a').className = 'score-reveal';
+  document.getElementById('score-b').className = 'score-reveal';
+  document.getElementById('result-box').className = 'result-box';
+  document.getElementById('btn-next').className = 'btn-next';
+  document.getElementById('result-explanation').innerHTML = '<div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>';
+
+  // Fill cards
+  document.getElementById('emoji-a').textContent = currentPair.a.emoji;
+  document.getElementById('name-a').textContent = currentPair.a.name;
+  document.getElementById('cat-a').textContent = currentPair.a.cat;
+  document.getElementById('emoji-b').textContent = currentPair.b.emoji;
+  document.getElementById('name-b').textContent = currentPair.b.name;
+  document.getElementById('cat-b').textContent = currentPair.b.cat;
+
+  document.getElementById('score-a').innerHTML = `${currentPair.sA}/100 <span class="score-label">notoriété</span>`;
+  document.getElementById('score-b').innerHTML = `${currentPair.sB}/100 <span class="score-label">notoriété</span>`;
+
+  document.getElementById('q-counter').textContent = `Question ${questionIndex + 1} / ${TOTAL_QUESTIONS}`;
+}
+
+function choose(choice) {
+  if (answered) return;
+  answered = true;
+
+  const correct = choice === currentPair.winner;
+  const cardA = document.getElementById('card-a');
+  const cardB = document.getElementById('card-b');
+
+  cardA.classList.add('disabled');
+  cardB.classList.add('disabled');
+  cardA.onclick = null;
+  cardB.onclick = null;
+
+  // Show scores
+  document.getElementById('score-a').classList.add('show');
+  document.getElementById('score-b').classList.add('show');
+
+  // Winner / loser
+  const winnerCard = currentPair.winner === 'A' ? cardA : cardB;
+  const loserCard = currentPair.winner === 'A' ? cardB : cardA;
+  winnerCard.classList.add('winner');
+  loserCard.classList.add('loser');
+
+  // Update score
+  if (correct) {
+    correctCount++;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    const multiplier = streak >= 8 ? 2.5 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1;
+    const points = Math.round(10 * multiplier);
+    score += points;
+    if (streak > 1) triggerConfetti();
+  } else {
+    streak = 0;
+  }
+
+  updateScoreDisplay();
+
+  // Result box
+  const resultBox = document.getElementById('result-box');
+  const resultStatus = document.getElementById('result-status');
+  resultStatus.textContent = correct ? '✅ Bonne réponse !' : '❌ Raté...';
+  resultStatus.className = 'result-status ' + (correct ? 'correct' : 'wrong');
+  resultBox.classList.add('show');
+
+  // Explanation (simulated with delay for fun)
+  setTimeout(() => {
+    document.getElementById('result-explanation').textContent = currentPair.exp;
+  }, 600);
+
+  // Next button
+  setTimeout(() => {
+    document.getElementById('btn-next').classList.add('show');
+  }, 800);
+}
+
+function nextQuestion() {
+  questionIndex++;
+  if (questionIndex >= TOTAL_QUESTIONS) {
+    showGameOver();
+    return;
+  }
+  loadQuestion();
+}
+
+function updateScoreDisplay() {
+  document.getElementById('score-display').textContent = score;
+  const streakEl = document.getElementById('streak-display');
+  streakEl.textContent = streak;
+  streakEl.className = 'streak-val';
+  if (streak > 0) {
+    void streakEl.offsetWidth;
+    streakEl.className = 'streak-val pulse';
+  }
+  document.getElementById('correct-display').textContent = correctCount;
+}
+
+function showGameOver() {
+  document.getElementById('game-area').style.display = 'none';
+  const go = document.getElementById('game-over');
+  go.style.display = 'block';
+  document.getElementById('final-score-val').textContent = score;
+  document.getElementById('stat-correct').textContent = correctCount;
+  document.getElementById('stat-streak').textContent = bestStreak;
+  document.getElementById('stat-pct').textContent = Math.round((correctCount / TOTAL_QUESTIONS) * 100) + '%';
+  triggerConfetti(30);
+}
+
+function restartGame() {
+  initGame();
+}
+
+function triggerConfetti(count = 15) {
+  const colors = ['#f472b6','#a78bfa','#38bdf8','#fbbf24','#4ade80','#fb923c'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (8 + Math.random() * 8) + 'px';
+      el.style.height = (8 + Math.random() * 8) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      el.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 60);
+  }
+}
+
+// Start !
+initGame();
+</script>
+</body>
+</html>
