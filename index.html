@@ -26,56 +26,90 @@
     pointer-events:none; z-index:0;
   }
 
-  /* NAV TABS */
-  .nav { position:relative; z-index:10; display:flex; justify-content:center; gap:8px; padding:16px 16px 0; }
-  .nav-btn {
-    font-family:'Boogaloo',cursive; font-size:1rem;
-    background:rgba(255,255,255,0.05); border:1px solid var(--border);
-    color:var(--muted); border-radius:50px; padding:8px 20px;
-    cursor:pointer; transition:all .2s;
-  }
+  /* NAV */
+  .nav { position:relative; z-index:10; display:flex; justify-content:center; gap:8px; padding:16px 16px 0; flex-wrap:wrap; }
+  .nav-btn { font-family:'Boogaloo',cursive; font-size:1rem; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); border-radius:50px; padding:8px 20px; cursor:pointer; transition:all .2s; }
   .nav-btn.active { background:linear-gradient(135deg,#7c3aed,#db2777); border-color:transparent; color:white; }
   .nav-btn:hover:not(.active) { background:rgba(255,255,255,0.1); color:var(--text); }
 
   /* PAGES */
-  .page { display:none; position:relative; z-index:1; max-width:760px; margin:0 auto; padding:20px 16px; }
+  .page { display:none; position:relative; z-index:1; max-width:800px; margin:0 auto; padding:20px 16px; }
   .page.active { display:flex; flex-direction:column; align-items:center; }
 
-  /* HEADER */
-  header { text-align:center; margin-bottom:20px; animation:fadeDown .6s ease; width:100%; }
-  header h1 {
-    font-family:'Boogaloo',cursive; font-size:clamp(2rem,6vw,3rem);
-    background:linear-gradient(90deg,#a78bfa,#f472b6,#38bdf8);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  }
-  header p { color:var(--muted); font-size:.95rem; margin-top:6px; }
+  /* ══════════════════════════════
+     MENU PAGE
+  ══════════════════════════════ */
+  .menu-header { text-align:center; margin-bottom:28px; animation:fadeDown .6s ease; width:100%; }
+  .menu-header h1 { font-family:'Boogaloo',cursive; font-size:clamp(2.2rem,6vw,3.2rem); background:linear-gradient(90deg,#a78bfa,#f472b6,#38bdf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .menu-header p { color:var(--muted); font-size:.95rem; margin-top:6px; }
 
-  /* SCORE BAR */
-  .score-bar {
-    display:flex; align-items:center; gap:20px;
-    background:rgba(255,255,255,.05); border:1px solid var(--border);
-    border-radius:50px; padding:10px 24px; margin-bottom:24px;
-    backdrop-filter:blur(10px); flex-wrap:wrap; justify-content:center;
-    animation:fadeDown .6s ease .1s both; width:100%;
+  .menu-section { width:100%; margin-bottom:24px; }
+  .menu-section h2 { font-family:'Boogaloo',cursive; font-size:1.4rem; margin-bottom:14px; color:var(--gold); }
+
+  /* Catégories */
+  .cat-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:10px; }
+  .cat-btn {
+    padding:12px 10px; border-radius:14px; border:2px solid var(--border);
+    background:var(--surface); cursor:pointer; text-align:center;
+    transition:all .2s; color:var(--text); font-family:'Nunito',sans-serif;
+    font-size:.9rem; font-weight:700;
   }
-  .score-item { display:flex; align-items:center; gap:8px; font-size:.95rem; font-weight:700; }
-  .score-val { color:var(--gold); font-size:1.1rem; }
-  .streak-val { color:#f472b6; font-size:1.1rem; }
+  .cat-btn .cat-emoji { font-size:1.6rem; display:block; margin-bottom:4px; }
+  .cat-btn .cat-count { font-size:.72rem; color:var(--muted); margin-top:2px; display:block; }
+  .cat-btn:hover { border-color:rgba(167,139,250,.5); background:rgba(167,139,250,.1); }
+  .cat-btn.selected { border-color:#a78bfa; background:rgba(167,139,250,.2); }
+  .cat-btn.selected .cat-emoji { filter:drop-shadow(0 0 8px rgba(167,139,250,.8)); }
+
+  .cat-actions { display:flex; gap:10px; margin-top:12px; }
+  .btn-small { background:rgba(255,255,255,.08); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:6px 14px; font-size:.85rem; cursor:pointer; transition:all .2s; font-family:'Nunito',sans-serif; }
+  .btn-small:hover { background:rgba(255,255,255,.15); color:var(--text); }
+
+  /* Manches */
+  .rounds-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(72px,1fr)); gap:8px; }
+  .round-btn {
+    padding:12px 6px; border-radius:12px; border:2px solid var(--border);
+    background:var(--surface); cursor:pointer; text-align:center;
+    font-family:'Boogaloo',cursive; font-size:1.2rem; color:var(--muted);
+    transition:all .2s;
+  }
+  .round-btn:hover { border-color:rgba(251,191,36,.5); color:var(--gold); }
+  .round-btn.selected { border-color:var(--gold); background:rgba(251,191,36,.15); color:var(--gold); }
+  .round-infinity { font-size:1.6rem; }
+
+  /* Bouton Lancer */
+  .btn-launch {
+    width:100%; padding:18px; margin-top:8px;
+    background:linear-gradient(135deg,#7c3aed,#db2777);
+    color:white; border:none; border-radius:16px;
+    font-family:'Boogaloo',cursive; font-size:1.6rem;
+    cursor:pointer; transition:transform .2s, box-shadow .2s, opacity .2s;
+  }
+  .btn-launch:hover:not(:disabled) { transform:scale(1.02); box-shadow:0 8px 32px rgba(124,58,237,.5); }
+  .btn-launch:disabled { opacity:.4; cursor:not-allowed; }
+
+  .menu-warning { text-align:center; color:#f87171; font-size:.85rem; margin-top:8px; min-height:20px; }
+
+  /* ══════════════════════════════
+     GAME PAGE
+  ══════════════════════════════ */
+  header { text-align:center; margin-bottom:16px; animation:fadeDown .6s ease; width:100%; }
+  header h1 { font-family:'Boogaloo',cursive; font-size:clamp(1.8rem,5vw,2.8rem); background:linear-gradient(90deg,#a78bfa,#f472b6,#38bdf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+  .score-bar { display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:50px; padding:10px 20px; margin-bottom:20px; backdrop-filter:blur(10px); flex-wrap:wrap; justify-content:center; animation:fadeDown .6s ease .1s both; width:100%; }
+  .score-item { display:flex; align-items:center; gap:6px; font-size:.9rem; font-weight:700; }
+  .score-val { color:var(--gold); font-size:1.05rem; }
+  .streak-val { color:#f472b6; font-size:1.05rem; }
   .streak-val.pulse { animation:pulse .4s ease; }
 
+  .question-counter { color:var(--muted); font-size:.85rem; margin-bottom:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; }
+
   /* CARDS */
-  .question-counter { color:var(--muted); font-size:.85rem; margin-bottom:14px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; }
-  .cards-area { width:100%; display:flex; flex-direction:row; align-items:stretch; margin-bottom:20px; }
-  .card {
-    flex:1; padding:28px 14px; cursor:pointer; text-align:center;
-    position:relative; overflow:hidden;
-    transition:transform .2s ease,box-shadow .2s ease,filter .3s ease;
-    animation:fadeUp .5s ease both; border:2px solid transparent; min-width:0;
-  }
+  .cards-area { width:100%; display:flex; flex-direction:row; align-items:stretch; margin-bottom:18px; }
+  .card { flex:1; padding:26px 12px; cursor:pointer; text-align:center; position:relative; overflow:hidden; transition:transform .2s ease,box-shadow .2s ease,filter .3s ease; animation:fadeUp .5s ease both; border:2px solid transparent; min-width:0; }
   #card-a { background:var(--card-a); border-radius:20px 0 0 20px; animation-delay:.1s; }
   #card-b { background:var(--card-b); border-radius:0 20px 20px 0; animation-delay:.2s; }
-  .vs-divider { width:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(10,10,26,.8); z-index:2; }
-  .vs-divider span { font-family:'Boogaloo',cursive; font-size:1.1rem; color:var(--gold); background:#1a1a35; border:2px solid rgba(251,191,36,.5); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; }
+  .vs-divider { width:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(10,10,26,.8); z-index:2; }
+  .vs-divider span { font-family:'Boogaloo',cursive; font-size:1.05rem; color:var(--gold); background:#1a1a35; border:2px solid rgba(251,191,36,.5); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; }
   .card::before { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .2s ease; }
   .card:hover::before { background:rgba(255,255,255,.08); }
   .card:hover { transform:translateY(-4px) scale(1.02); box-shadow:0 20px 40px rgba(0,0,0,.4); }
@@ -83,29 +117,27 @@
   .card.disabled { cursor:default; pointer-events:none; }
   .card.winner { border-color:var(--gold); box-shadow:0 0 30px rgba(251,191,36,.4); }
   .card.loser { filter:brightness(.4) saturate(.2); }
-  .card-emoji { font-size:3rem; margin-bottom:10px; display:block; }
-  .card-name { font-family:'Boogaloo',cursive; font-size:clamp(1rem,3.5vw,1.5rem); text-shadow:0 2px 8px rgba(0,0,0,.3); line-height:1.2; }
-  .card-category { font-size:.7rem; opacity:.7; margin-top:5px; text-transform:uppercase; letter-spacing:.08em; }
-  .score-reveal { margin-top:12px; font-size:1.7rem; font-family:'Boogaloo',cursive; opacity:0; transform:scale(.5); transition:all .4s cubic-bezier(.34,1.56,.64,1); }
+  .card-emoji { font-size:2.8rem; margin-bottom:8px; display:block; }
+  .card-name { font-family:'Boogaloo',cursive; font-size:clamp(.95rem,3.2vw,1.45rem); text-shadow:0 2px 8px rgba(0,0,0,.3); line-height:1.2; }
+  .card-category { font-size:.68rem; opacity:.7; margin-top:4px; text-transform:uppercase; letter-spacing:.08em; }
+  .score-reveal { margin-top:10px; font-size:1.6rem; font-family:'Boogaloo',cursive; opacity:0; transform:scale(.5); transition:all .4s cubic-bezier(.34,1.56,.64,1); }
   .score-reveal.show { opacity:1; transform:scale(1); }
-  .score-label { font-size:.68rem; opacity:.8; display:block; margin-top:2px; }
+  .score-label { font-size:.65rem; opacity:.8; display:block; margin-top:2px; }
 
-  /* RESULT */
-  .result-box { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 22px; margin-bottom:18px; backdrop-filter:blur(10px); opacity:0; transform:translateY(10px); transition:all .4s ease .3s; }
+  .result-box { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px 20px; margin-bottom:16px; backdrop-filter:blur(10px); opacity:0; transform:translateY(10px); transition:all .4s ease .3s; }
   .result-box.show { opacity:1; transform:translateY(0); }
-  .result-status { font-family:'Boogaloo',cursive; font-size:1.5rem; margin-bottom:6px; }
+  .result-status { font-family:'Boogaloo',cursive; font-size:1.4rem; margin-bottom:5px; }
   .result-status.correct { color:#4ade80; }
   .result-status.wrong { color:#f87171; }
-  .result-explanation { color:var(--muted); font-size:.9rem; line-height:1.6; min-height:36px; }
-  .loading-dots span { display:inline-block; animation:dotBounce 1.2s infinite; font-size:1.4rem; }
+  .result-explanation { color:var(--muted); font-size:.88rem; line-height:1.6; min-height:32px; }
+  .loading-dots span { display:inline-block; animation:dotBounce 1.2s infinite; font-size:1.3rem; }
   .loading-dots span:nth-child(2){animation-delay:.2s}
   .loading-dots span:nth-child(3){animation-delay:.4s}
 
-  .btn-next { background:linear-gradient(135deg,#7c3aed,#db2777); color:white; border:none; border-radius:50px; padding:14px 40px; font-family:'Boogaloo',cursive; font-size:1.3rem; cursor:pointer; transition:transform .2s,box-shadow .2s; display:none; opacity:0; }
+  .btn-next { background:linear-gradient(135deg,#7c3aed,#db2777); color:white; border:none; border-radius:50px; padding:12px 36px; font-family:'Boogaloo',cursive; font-size:1.2rem; cursor:pointer; transition:transform .2s,box-shadow .2s; display:none; opacity:0; }
   .btn-next.show { display:block; opacity:1; animation:fadeUp .4s ease .6s both; }
   .btn-next:hover { transform:scale(1.05); box-shadow:0 8px 24px rgba(124,58,237,.5); }
 
-  /* LOADING STATE */
   .loading-state { text-align:center; padding:60px 20px; color:var(--muted); font-size:1.1rem; }
   .loading-state .spinner { font-size:3rem; animation:spin 1s linear infinite; display:block; margin-bottom:16px; }
 
@@ -115,64 +147,58 @@
   .final-score { font-size:1.1rem; color:var(--muted); margin-bottom:20px; }
   .final-score strong { color:var(--gold); font-size:1.4rem; }
   .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; width:100%; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 8px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 8px; }
   .stat-card .stat-num { font-family:'Boogaloo',cursive; font-size:2rem; color:var(--gold); display:block; }
-  .stat-card .stat-label { font-size:.78rem; color:var(--muted); }
+  .stat-card .stat-label { font-size:.76rem; color:var(--muted); }
 
-  /* PSEUDO FORM */
-  .pseudo-form { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
-  .pseudo-form h3 { font-family:'Boogaloo',cursive; font-size:1.3rem; margin-bottom:12px; color:var(--gold); }
+  .pseudo-form { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:14px; }
+  .pseudo-form h3 { font-family:'Boogaloo',cursive; font-size:1.2rem; margin-bottom:10px; color:var(--gold); }
   .input-row { display:flex; gap:10px; }
   .input-row input { flex:1; background:rgba(255,255,255,.08); border:1px solid var(--border); border-radius:10px; padding:10px 14px; color:var(--text); font-family:'Nunito',sans-serif; font-size:1rem; outline:none; }
   .input-row input:focus { border-color:#7c3aed; }
-  .btn-submit { background:linear-gradient(135deg,#7c3aed,#db2777); color:white; border:none; border-radius:10px; padding:10px 20px; font-family:'Boogaloo',cursive; font-size:1.1rem; cursor:pointer; white-space:nowrap; }
-  .btn-submit:hover { opacity:.9; }
+  .btn-submit { background:linear-gradient(135deg,#7c3aed,#db2777); color:white; border:none; border-radius:10px; padding:10px 18px; font-family:'Boogaloo',cursive; font-size:1.1rem; cursor:pointer; white-space:nowrap; }
 
-  .btn-restart { background:linear-gradient(135deg,#0891b2,#16a34a); color:white; border:none; border-radius:50px; padding:16px 48px; font-family:'Boogaloo',cursive; font-size:1.5rem; cursor:pointer; transition:transform .2s,box-shadow .2s; }
-  .btn-restart:hover { transform:scale(1.05); box-shadow:0 8px 24px rgba(8,145,178,.5); }
+  .gameover-btns { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .btn-restart { background:linear-gradient(135deg,#0891b2,#16a34a); color:white; border:none; border-radius:50px; padding:14px 36px; font-family:'Boogaloo',cursive; font-size:1.3rem; cursor:pointer; transition:transform .2s; }
+  .btn-restart:hover { transform:scale(1.05); }
+  .btn-menu { background:rgba(255,255,255,.1); border:1px solid var(--border); color:var(--text); border-radius:50px; padding:14px 36px; font-family:'Boogaloo',cursive; font-size:1.3rem; cursor:pointer; transition:all .2s; }
+  .btn-menu:hover { background:rgba(255,255,255,.2); }
 
   /* LEADERBOARD PAGE */
   .lb-header { width:100%; text-align:center; margin-bottom:24px; }
   .lb-header h2 { font-family:'Boogaloo',cursive; font-size:2.5rem; background:linear-gradient(90deg,#fbbf24,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .lb-header p { color:var(--muted); margin-top:6px; }
-
   .lb-table { width:100%; border-collapse:collapse; }
-  .lb-table th { color:var(--muted); font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  .lb-table th { color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
   .lb-table td { padding:12px; border-bottom:1px solid rgba(255,255,255,.05); }
   .lb-table tr:hover td { background:rgba(255,255,255,.03); }
   .lb-rank { font-family:'Boogaloo',cursive; font-size:1.3rem; color:var(--muted); }
-  .lb-rank.gold { color:#fbbf24; }
-  .lb-rank.silver { color:#94a3b8; }
-  .lb-rank.bronze { color:#cd7c3a; }
-  .lb-pseudo { font-weight:700; font-size:1rem; }
-  .lb-score { font-family:'Boogaloo',cursive; font-size:1.3rem; color:var(--gold); }
-  .lb-correct { color:var(--muted); font-size:.9rem; }
-  .lb-date { color:var(--muted); font-size:.8rem; }
+  .lb-rank.gold{color:#fbbf24} .lb-rank.silver{color:#94a3b8} .lb-rank.bronze{color:#cd7c3a}
+  .lb-pseudo { font-weight:700; }
+  .lb-score { font-family:'Boogaloo',cursive; font-size:1.2rem; color:var(--gold); }
+  .lb-correct { color:var(--muted); font-size:.88rem; }
+  .lb-date { color:var(--muted); font-size:.78rem; }
   .lb-empty { text-align:center; padding:40px; color:var(--muted); }
 
-  /* ADD PAIR PAGE */
+  /* ADD PAGE */
   .add-header { width:100%; text-align:center; margin-bottom:24px; }
   .add-header h2 { font-family:'Boogaloo',cursive; font-size:2.5rem; background:linear-gradient(90deg,#38bdf8,#4ade80); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .add-header p { color:var(--muted); margin-top:6px; font-size:.9rem; }
-
-  .add-form { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:28px; }
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  .add-form { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:24px; }
+  .form-grid { display:grid; grid-template-columns:1fr 44px 1fr; gap:12px; margin-bottom:18px; align-items:start; }
   .form-group { display:flex; flex-direction:column; gap:6px; }
-  .form-group label { font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; }
-  .form-group input {
-    background:rgba(255,255,255,.08); border:1px solid var(--border);
-    border-radius:10px; padding:10px 14px; color:var(--text);
-    font-family:'Nunito',sans-serif; font-size:1rem; outline:none;
-    transition:border-color .2s;
-  }
+  .form-group label { font-size:.76rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; }
+  .form-group input { background:rgba(255,255,255,.08); border:1px solid var(--border); border-radius:10px; padding:10px 12px; color:var(--text); font-family:'Nunito',sans-serif; font-size:.95rem; outline:none; transition:border-color .2s; }
   .form-group input:focus { border-color:#7c3aed; }
-  .form-group input::placeholder { color:rgba(255,255,255,.3); }
-  .form-divider { display:flex; align-items:center; justify-content:center; }
-  .form-divider span { font-family:'Boogaloo',cursive; font-size:2rem; color:var(--gold); background:#1a1a35; border:2px solid rgba(251,191,36,.4); border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; margin-top:24px; }
-  .btn-add { width:100%; background:linear-gradient(135deg,#0891b2,#16a34a); color:white; border:none; border-radius:12px; padding:14px; font-family:'Boogaloo',cursive; font-size:1.3rem; cursor:pointer; transition:opacity .2s; }
+  .form-group input::placeholder { color:rgba(255,255,255,.25); }
+  .form-divider-vs { display:flex; align-items:center; justify-content:center; padding-top:24px; }
+  .form-divider-vs span { font-family:'Boogaloo',cursive; font-size:1.1rem; color:var(--gold); background:#1a1a35; border:2px solid rgba(251,191,36,.4); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; }
+  .winner-row { display:flex; gap:10px; margin-bottom:16px; }
+  .winner-btn { flex:1; padding:10px; border-radius:10px; border:2px solid var(--border); background:rgba(124,58,237,.15); color:var(--text); font-family:'Boogaloo',cursive; font-size:1.05rem; cursor:pointer; transition:all .2s; }
+  .btn-add { width:100%; background:linear-gradient(135deg,#0891b2,#16a34a); color:white; border:none; border-radius:12px; padding:14px; font-family:'Boogaloo',cursive; font-size:1.2rem; cursor:pointer; transition:opacity .2s; }
   .btn-add:hover { opacity:.9; }
   .btn-add:disabled { opacity:.5; cursor:not-allowed; }
-  .add-feedback { margin-top:16px; padding:12px 16px; border-radius:10px; font-size:.9rem; display:none; }
+  .add-feedback { margin-top:14px; padding:12px 16px; border-radius:10px; font-size:.88rem; display:none; }
   .add-feedback.success { background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.3); color:#4ade80; }
   .add-feedback.error { background:rgba(248,113,113,.1); border:1px solid rgba(248,113,113,.3); color:#f87171; }
 
@@ -190,22 +216,60 @@
 <body>
 
 <nav class="nav">
-  <button class="nav-btn active" onclick="showPage('game')">🎮 Jouer</button>
-  <button class="nav-btn" onclick="showPage('leaderboard')">🏆 Classement</button>
-  <button class="nav-btn" onclick="showPage('add')">➕ Ajouter</button>
+  <button class="nav-btn active" onclick="showTab('menu', this)">🎮 Jouer</button>
+  <button class="nav-btn" onclick="showTab('leaderboard', this)">🏆 Classement</button>
+  <button class="nav-btn" onclick="showTab('add', this)">➕ Ajouter</button>
 </nav>
 
-<!-- PAGE JEU -->
-<div class="page active" id="page-game">
+<!-- ══════════════════════ PAGE MENU ══════════════════════ -->
+<div class="page active" id="page-menu">
+  <div class="menu-header">
+    <h1>🌍 Who's More Famous?</h1>
+    <p>Choisis tes catégories et lance la partie !</p>
+  </div>
+
+  <div class="menu-section">
+    <h2>📂 Catégories</h2>
+    <div class="cat-grid" id="cat-grid">
+      <div style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1">
+        <span style="font-size:2rem;display:block;animation:spin 1s linear infinite">🌍</span>
+        Chargement...
+      </div>
+    </div>
+    <div class="cat-actions">
+      <button class="btn-small" onclick="selectAllCats()">✅ Tout sélectionner</button>
+      <button class="btn-small" onclick="deselectAllCats()">❌ Tout désélectionner</button>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <h2>🔢 Nombre de manches</h2>
+    <div class="rounds-grid" id="rounds-grid">
+      <div class="round-btn" onclick="selectRound(1, this)">1</div>
+      <div class="round-btn" onclick="selectRound(3, this)">3</div>
+      <div class="round-btn" onclick="selectRound(5, this)">5</div>
+      <div class="round-btn selected" onclick="selectRound(10, this)">10</div>
+      <div class="round-btn" onclick="selectRound(15, this)">15</div>
+      <div class="round-btn" onclick="selectRound(20, this)">20</div>
+      <div class="round-btn round-infinity" onclick="selectRound(0, this)" title="Mode infini">∞</div>
+    </div>
+  </div>
+
+  <button class="btn-launch" id="btn-launch" onclick="launchGame()">🚀 Lancer la partie</button>
+  <div class="menu-warning" id="menu-warning"></div>
+</div>
+
+<!-- ══════════════════════ PAGE JEU ══════════════════════ -->
+<div class="page" id="page-game">
   <header>
     <h1>🌍 Who's More Famous?</h1>
-    <p>Devine lequel est le plus connu dans le monde !</p>
   </header>
 
   <div class="score-bar">
     <div class="score-item"><span>⭐</span><span>Score</span><span class="score-val" id="score-display">0</span></div>
     <div class="score-item"><span>🔥</span><span>Série</span><span class="streak-val" id="streak-display">0</span></div>
-    <div class="score-item"><span>✅</span><span id="correct-display">0</span><span style="color:var(--muted)">&nbsp;/ 10</span></div>
+    <div class="score-item"><span>✅</span><span id="correct-display">0</span><span id="total-display" style="color:var(--muted)">&nbsp;/ 10</span></div>
+    <div class="score-item" id="cat-display-bar" style="color:var(--muted);font-size:.8rem"></div>
   </div>
 
   <div id="game-loading" class="loading-state" style="width:100%">
@@ -255,99 +319,59 @@
       </div>
       <div id="submit-feedback" style="margin-top:10px;font-size:.85rem;color:var(--muted);display:none"></div>
     </div>
-    <button class="btn-restart" onclick="restartGame()">🔄 Rejouer</button>
+    <div class="gameover-btns">
+      <button class="btn-restart" onclick="restartSameConfig()">🔄 Rejouer</button>
+      <button class="btn-menu" onclick="goToMenu()">⚙️ Changer les réglages</button>
+    </div>
   </div>
 </div>
 
-<!-- PAGE LEADERBOARD -->
+<!-- ══════════════════════ PAGE LEADERBOARD ══════════════════════ -->
 <div class="page" id="page-leaderboard">
   <div class="lb-header">
     <h2>🏆 Classement Mondial</h2>
     <p>Les meilleurs cerveaux du monde</p>
   </div>
   <div id="lb-loading" class="loading-state" style="width:100%">
-    <span class="spinner">🏆</span>
-    Chargement du classement...
+    <span class="spinner">🏆</span>Chargement...
   </div>
   <table class="lb-table" id="lb-table" style="display:none">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Pseudo</th>
-        <th>Score</th>
-        <th>Réponses</th>
-        <th>Date</th>
-      </tr>
-    </thead>
+    <thead><tr><th>#</th><th>Pseudo</th><th>Score</th><th>Réponses</th><th>Date</th></tr></thead>
     <tbody id="lb-body"></tbody>
   </table>
-  <div id="lb-empty" class="lb-empty" style="display:none">
-    😴 Personne n'a encore joué... Sois le premier !
-  </div>
+  <div id="lb-empty" class="lb-empty" style="display:none">😴 Personne n''a encore joué... Sois le premier !</div>
 </div>
 
-<!-- PAGE AJOUTER -->
+<!-- ══════════════════════ PAGE AJOUTER ══════════════════════ -->
 <div class="page" id="page-add">
   <div class="add-header">
     <h2>➕ Proposer une paire</h2>
-    <p>Tu penses à une comparaison WTF ? Ajoute-la ici !<br>Remplis les infos, on s'occupe du reste.</p>
+    <p>Tu penses à une comparaison WTF ? Ajoute-la !</p>
   </div>
   <div class="add-form">
     <div class="form-grid">
       <div>
-        <div class="form-group">
-          <label>Nom A</label>
-          <input type="text" id="add-name-a" placeholder="Ex: Michael Jackson">
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label>Emoji A</label>
-          <input type="text" id="add-emoji-a" placeholder="Ex: 🎤" maxlength="4">
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label>Catégorie A</label>
-          <input type="text" id="add-cat-a" placeholder="Ex: Légende de la musique">
-        </div>
+        <div class="form-group"><label>Nom A</label><input type="text" id="add-name-a" placeholder="Ex: Gazo"></div>
+        <div class="form-group" style="margin-top:10px"><label>Emoji A</label><input type="text" id="add-emoji-a" placeholder="🎤" maxlength="4"></div>
+        <div class="form-group" style="margin-top:10px"><label>Catégorie A</label><input type="text" id="add-cat-a" placeholder="Rap FR"></div>
       </div>
-
-      <div class="form-divider"><span>VS</span></div>
-
+      <div class="form-divider-vs"><span>VS</span></div>
       <div>
-        <div class="form-group">
-          <label>Nom B</label>
-          <input type="text" id="add-name-b" placeholder="Ex: Le Pain">
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label>Emoji B</label>
-          <input type="text" id="add-emoji-b" placeholder="Ex: 🍞" maxlength="4">
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label>Catégorie B</label>
-          <input type="text" id="add-cat-b" placeholder="Ex: Aliment">
-        </div>
+        <div class="form-group"><label>Nom B</label><input type="text" id="add-name-b" placeholder="Ex: Ninho"></div>
+        <div class="form-group" style="margin-top:10px"><label>Emoji B</label><input type="text" id="add-emoji-b" placeholder="👑" maxlength="4"></div>
+        <div class="form-group" style="margin-top:10px"><label>Catégorie B</label><input type="text" id="add-cat-b" placeholder="Rap FR"></div>
       </div>
     </div>
-
-    <div class="form-group" style="margin-bottom:16px">
-      <label>Qui est le plus connu ? (le gagnant)</label>
-      <div style="display:flex;gap:10px;margin-top:6px">
-        <button id="winner-a-btn" onclick="setWinner('A')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--border);background:rgba(124,58,237,.2);color:var(--text);font-family:'Boogaloo',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s">A est plus connu</button>
-        <button id="winner-b-btn" onclick="setWinner('B')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--border);background:rgba(8,145,178,.2);color:var(--text);font-family:'Boogaloo',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s">B est plus connu</button>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Qui est le plus connu ?</label>
+      <div class="winner-row">
+        <button class="winner-btn" id="winner-a-btn" onclick="setWinner('A')">A est plus connu</button>
+        <button class="winner-btn" id="winner-b-btn" onclick="setWinner('B')">B est plus connu</button>
       </div>
     </div>
-
-    <div class="form-group" style="margin-bottom:16px">
-      <label>Score A (0-100) — notoriété estimée</label>
-      <input type="number" id="add-score-a" placeholder="Ex: 86" min="0" max="100">
-    </div>
-    <div class="form-group" style="margin-bottom:16px">
-      <label>Score B (0-100) — notoriété estimée</label>
-      <input type="number" id="add-score-b" placeholder="Ex: 89" min="0" max="100">
-    </div>
-    <div class="form-group" style="margin-bottom:20px">
-      <label>Explication (2-3 phrases fun)</label>
-      <input type="text" id="add-explanation" placeholder="Ex: MJ a vendu 750M d'albums, mais le pain nourrit 5 milliards de personnes...">
-    </div>
-
+    <div class="form-group" style="margin-bottom:12px"><label>Score A (0-100)</label><input type="number" id="add-score-a" placeholder="86" min="0" max="100"></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Score B (0-100)</label><input type="number" id="add-score-b" placeholder="89" min="0" max="100"></div>
+    <div class="form-group" style="margin-bottom:18px"><label>Explication (2-3 phrases fun)</label><input type="text" id="add-explanation" placeholder="Ex: Ninho a 8 albums de diamant..."></div>
     <button class="btn-add" id="btn-add" onclick="submitPair()">🚀 Ajouter la paire</button>
     <div class="add-feedback" id="add-feedback"></div>
   </div>
@@ -355,167 +379,352 @@
 
 <script>
 // ══════════════════════════════════════
-// CONFIG — remplace par tes vraies valeurs
+// CONFIG
 // ══════════════════════════════════════
 const SUPABASE_URL = 'https://snuhxrejgcriuwecuvvw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNudWh4cmVqZ2NyaXV3ZWN1dnZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NTIwNTAsImV4cCI6MjA5MzEyODA1MH0.Qym0AWGgAZ2cFoQcOW6pP1-CzJjBW2YG9PPXBrBKH8w';
 
 // ══════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'leaderboard') loadLeaderboard();
-}
-
-// ══════════════════════════════════════
 // SUPABASE HELPERS
 // ══════════════════════════════════════
-async function sbGet(table, params = '') {
+async function sbGet(table, params='') {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
   });
   return r.json();
 }
 async function sbPost(table, body) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify(body)
+  return fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(body)
   });
-  return r;
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function showTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='leaderboard') loadLeaderboard();
+}
+
+// ══════════════════════════════════════
+// MENU — CATÉGORIES
+// ══════════════════════════════════════
+let allPairs = [];
+let selectedCats = new Set();
+let selectedRounds = 10;
+
+// Définition des catégories avec emoji et label
+const CAT_META = {
+  'Rap FR':       { emoji:'🎤', label:'Rap FR' },
+  'Rap BE':       { emoji:'🎤', label:'Rap BE' },
+  'Rap US':       { emoji:'🎤', label:'Rap US' },
+  'Rap CA':       { emoji:'🎤', label:'Rap CA' },
+  'Rap UK':       { emoji:'🎤', label:'Rap UK' },
+  'R&B':          { emoji:'🎵', label:'R&B' },
+  'Prod US':      { emoji:'🎛️', label:'Prod US' },
+  'Créateur FR':  { emoji:'📱', label:'Créateurs FR' },
+  'Streamer FR':  { emoji:'🟣', label:'Streamers FR' },
+  'Streameuse FR':{ emoji:'🟣', label:'Streamers FR' },
+  'Influenceuse FR':{ emoji:'✨', label:'Influenceurs FR' },
+  'Créatrice FR': { emoji:'✨', label:'Influenceurs FR' },
+  'Marque sport': { emoji:'👟', label:'Mode & Marques' },
+  'Luxe streetwear':{ emoji:'👟', label:'Mode & Marques' },
+  'Streetwear':   { emoji:'🧢', label:'Mode & Marques' },
+  'Streetwear UK':{ emoji:'🧢', label:'Mode & Marques' },
+  'UK streetwear':{ emoji:'🧢', label:'Mode & Marques' },
+  'IT streetwear':{ emoji:'🧢', label:'Mode & Marques' },
+  'Marque IT':    { emoji:'🧢', label:'Mode & Marques' },
+  'Fast fashion': { emoji:'🛍️', label:'Mode & Marques' },
+  'Sneakers':     { emoji:'👟', label:'Mode & Marques' },
+  'Outdoor':      { emoji:'🏔️', label:'Mode & Marques' },
+  'Luxe outdoor': { emoji:'🏔️', label:'Mode & Marques' },
+  'Luxe':         { emoji:'💎', label:'Mode & Marques' },
+  'Mode FR':      { emoji:'👗', label:'Mode & Marques' },
+  'Bijoux rock':  { emoji:'💀', label:'Mode & Marques' },
+  'Réseau social':{ emoji:'📲', label:'Apps & Tech' },
+  'Streaming':    { emoji:'📲', label:'Apps & Tech' },
+  'Streaming live':{ emoji:'📲', label:'Apps & Tech' },
+  'App photo':    { emoji:'📲', label:'Apps & Tech' },
+  'App':          { emoji:'📲', label:'Apps & Tech' },
+  'Livraison':    { emoji:'📲', label:'Apps & Tech' },
+  'Messagerie':   { emoji:'📲', label:'Apps & Tech' },
+  'Navigation':   { emoji:'📲', label:'Apps & Tech' },
+  'Voyage':       { emoji:'📲', label:'Apps & Tech' },
+  'Fintech':      { emoji:'📲', label:'Apps & Tech' },
+  'App mode':     { emoji:'📲', label:'Apps & Tech' },
+  'Tech Apple':   { emoji:'📲', label:'Apps & Tech' },
+  'Ville FR':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville US':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville JP':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville KR':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville DE':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville NL':     { emoji:'🌍', label:'Lieux & Villes' },
+  'Ville UAE':    { emoji:'🌍', label:'Lieux & Villes' },
+  'Île Espagne':  { emoji:'🌍', label:'Lieux & Villes' },
+  'Île Grèce':    { emoji:'🌍', label:'Lieux & Villes' },
+  'Île Indonésie':{ emoji:'🌍', label:'Lieux & Villes' },
+  'Mexique':      { emoji:'🌍', label:'Lieux & Villes' },
+  'Asie':         { emoji:'🌍', label:'Lieux & Villes' },
+  'Principauté':  { emoji:'🌍', label:'Lieux & Villes' },
+  'Côte d\'Azur': { emoji:'🌍', label:'Lieux & Villes' },
+  'Station ski':  { emoji:'⛷️', label:'Lieux & Villes' },
+  'Monument Paris':{ emoji:'🗼', label:'Paris' },
+  'Musée Paris':  { emoji:'🗼', label:'Paris' },
+  'Avenue Paris': { emoji:'🗼', label:'Paris' },
+  'Rue Paris':    { emoji:'🗼', label:'Paris' },
+  'Quartier Paris':{ emoji:'🗼', label:'Paris' },
+  'Commerce Paris':{ emoji:'🗼', label:'Paris' },
+  'Club Paris':   { emoji:'🗼', label:'Paris' },
+  'Rooftop Paris':{ emoji:'🗼', label:'Paris' },
+  'Bar Paris':    { emoji:'🗼', label:'Paris' },
+  'Jardin Paris': { emoji:'🗼', label:'Paris' },
+  'Parc Paris':   { emoji:'🗼', label:'Paris' },
+  'Place Paris':  { emoji:'🗼', label:'Paris' },
+  'Slang mode':   { emoji:'🧠', label:'Concepts & Slang' },
+  'Slang attitude':{ emoji:'🧠', label:'Concepts & Slang' },
+  'Slang':        { emoji:'🧠', label:'Concepts & Slang' },
+  'Slang relation':{ emoji:'🧠', label:'Concepts & Slang' },
+  'Slang TikTok': { emoji:'🧠', label:'Concepts & Slang' },
+  'Slang travail':{ emoji:'🧠', label:'Concepts & Slang' },
+  'Slang web':    { emoji:'🧠', label:'Concepts & Slang' },
+  'Slang culture':{ emoji:'🧠', label:'Concepts & Slang' },
+  'Slang business':{ emoji:'🧠', label:'Concepts & Slang' },
+  'Slang commerce':{ emoji:'🧠', label:'Concepts & Slang' },
+};
+
+// Groupes affichés dans le menu
+const GROUP_META = {
+  'Rap FR/BE':     { emoji:'🎤', cats:['Rap FR','Rap BE'] },
+  'Rap US/UK/CA':  { emoji:'🎤', cats:['Rap US','Rap UK','Rap CA','R&B','Prod US'] },
+  'Créateurs FR':  { emoji:'📱', cats:['Créateur FR','Streamer FR','Streameuse FR','Influenceuse FR','Créatrice FR'] },
+  'Mode & Marques':{ emoji:'👟', cats:['Marque sport','Luxe streetwear','Streetwear','Streetwear UK','UK streetwear','IT streetwear','Marque IT','Fast fashion','Sneakers','Outdoor','Luxe outdoor','Luxe','Mode FR','Bijoux rock'] },
+  'Apps & Tech':   { emoji:'📲', cats:['Réseau social','Streaming','Streaming live','App photo','App','Livraison','Messagerie','Navigation','Voyage','Fintech','App mode','Tech Apple'] },
+  'Lieux & Villes':{ emoji:'🌍', cats:['Ville FR','Ville US','Ville JP','Ville KR','Ville DE','Ville NL','Ville UAE','Île Espagne','Île Grèce','Île Indonésie','Mexique','Asie','Principauté','Côte d\'Azur','Station ski'] },
+  'Paris':         { emoji:'🗼', cats:['Monument Paris','Musée Paris','Avenue Paris','Rue Paris','Quartier Paris','Commerce Paris','Club Paris','Rooftop Paris','Bar Paris','Jardin Paris','Parc Paris','Place Paris'] },
+  'Concepts & Slang':{ emoji:'🧠', cats:['Slang mode','Slang attitude','Slang','Slang relation','Slang TikTok','Slang travail','Slang web','Slang culture','Slang business','Slang commerce'] },
+};
+
+// Compte les paires disponibles par groupe
+function countPairsForGroup(groupKey) {
+  const cats = GROUP_META[groupKey].cats;
+  return allPairs.filter(p => cats.includes(p.cat_a) && cats.includes(p.cat_b)).length;
+}
+
+function buildCatGrid() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = '';
+  Object.entries(GROUP_META).forEach(([key, meta]) => {
+    const count = countPairsForGroup(key);
+    if(count === 0) return;
+    const btn = document.createElement('div');
+    btn.className = 'cat-btn selected';
+    btn.dataset.group = key;
+    btn.innerHTML = `<span class="cat-emoji">${meta.emoji}</span>${key}<span class="cat-count">${count} paires</span>`;
+    btn.onclick = () => toggleCat(key, btn);
+    grid.appendChild(btn);
+    selectedCats.add(key);
+  });
+  updateLaunchBtn();
+}
+
+function toggleCat(key, btn) {
+  if(selectedCats.has(key)) { selectedCats.delete(key); btn.classList.remove('selected'); }
+  else { selectedCats.add(key); btn.classList.add('selected'); }
+  updateLaunchBtn();
+}
+function selectAllCats() {
+  document.querySelectorAll('.cat-btn').forEach(b=>{ b.classList.add('selected'); selectedCats.add(b.dataset.group); });
+  updateLaunchBtn();
+}
+function deselectAllCats() {
+  document.querySelectorAll('.cat-btn').forEach(b=>{ b.classList.remove('selected'); selectedCats.delete(b.dataset.group); });
+  updateLaunchBtn();
+}
+
+function selectRound(n, btn) {
+  document.querySelectorAll('.round-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedRounds = n;
+  updateLaunchBtn();
+}
+
+function updateLaunchBtn() {
+  const btn = document.getElementById('btn-launch');
+  const warn = document.getElementById('menu-warning');
+  const available = getFilteredPairs().length;
+  if(selectedCats.size === 0) {
+    btn.disabled = true; warn.textContent = '⚠️ Sélectionne au moins une catégorie !';
+  } else if(available === 0) {
+    btn.disabled = true; warn.textContent = '⚠️ Aucune paire disponible pour ces catégories.';
+  } else if(selectedRounds !== 0 && available < selectedRounds) {
+    btn.disabled = false; warn.textContent = `ℹ️ Seulement ${available} paires disponibles — la partie durera ${available} manches.`;
+  } else {
+    btn.disabled = false; warn.textContent = '';
+  }
+}
+
+function getFilteredPairs() {
+  const allSelectedCats = [];
+  selectedCats.forEach(g => GROUP_META[g].cats.forEach(c => allSelectedCats.push(c)));
+  return allPairs.filter(p => allSelectedCats.includes(p.cat_a) && allSelectedCats.includes(p.cat_b));
 }
 
 // ══════════════════════════════════════
 // GAME STATE
 // ══════════════════════════════════════
-let allPairs = [], pairs = [], currentPair = null;
-let questionIndex = 0, score = 0, streak = 0, bestStreak = 0, correctCount = 0, answered = false;
-const TOTAL = 10;
+let pairs=[], currentPair=null, questionIndex=0;
+let score=0, streak=0, bestStreak=0, correctCount=0, answered=false;
+let totalRounds=10, infiniteMode=false;
 
-function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
-
-async function loadPairs() {
+async function loadAllPairs() {
   try {
-    const data = await sbGet('pairs', 'select=*');
-    allPairs = data;
-    document.getElementById('game-loading').style.display = 'none';
-    document.getElementById('game-area').style.display = 'flex';
-    startGame();
+    const data = await sbGet('pairs','select=*');
+    allPairs = data || [];
+    buildCatGrid();
   } catch(e) {
-    document.getElementById('game-loading').innerHTML = '❌ Erreur de chargement. Vérifie ta connexion.';
+    document.getElementById('cat-grid').innerHTML = '<div style="color:#f87171;grid-column:1/-1;text-align:center;padding:20px">❌ Erreur de connexion Supabase.</div>';
   }
 }
 
-function startGame() {
-  pairs = shuffle(allPairs).slice(0, Math.min(TOTAL, allPairs.length));
-  questionIndex = score = streak = bestStreak = correctCount = 0; answered = false;
-  document.getElementById('game-area').style.display = 'flex';
-  document.getElementById('game-over').style.display = 'none';
-  updateScore(); loadQ();
+function launchGame() {
+  const filtered = getFilteredPairs();
+  if(filtered.length === 0) return;
+  infiniteMode = selectedRounds === 0;
+  totalRounds = infiniteMode ? Infinity : Math.min(selectedRounds, filtered.length);
+  pairs = shuffle(filtered).slice(0, infiniteMode ? filtered.length : totalRounds);
+  questionIndex=score=streak=bestStreak=correctCount=0; answered=false;
+
+  // Aller sur la page jeu
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-game').classList.add('active');
+  document.querySelector('.nav-btn').classList.add('active');
+
+  document.getElementById('game-loading').style.display='none';
+  document.getElementById('game-area').style.display='flex';
+  document.getElementById('game-over').style.display='none';
+
+  // Afficher les catégories sélectionnées
+  const catNames = [...selectedCats].join(', ');
+  document.getElementById('cat-display-bar').textContent = catNames.length > 40 ? catNames.substring(0,38)+'…' : catNames;
+
+  updateTotalDisplay();
+  updateScore();
+  loadQ();
+}
+
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+
+function updateTotalDisplay() {
+  const t = document.getElementById('total-display');
+  t.textContent = infiniteMode ? ' / ∞' : ` / ${infiniteMode ? '∞' : Math.min(totalRounds, pairs.length)}`;
 }
 
 function loadQ() {
-  answered = false; currentPair = pairs[questionIndex];
-  const cA = document.getElementById('card-a'), cB = document.getElementById('card-b');
-  cA.className = 'card'; cB.className = 'card';
-  cA.onclick = () => choose('A'); cB.onclick = () => choose('B');
-  document.getElementById('score-a').className = 'score-reveal';
-  document.getElementById('score-b').className = 'score-reveal';
-  document.getElementById('result-box').className = 'result-box';
-  document.getElementById('btn-next').className = 'btn-next';
-  document.getElementById('result-explanation').innerHTML = '<div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>';
-  document.getElementById('emoji-a').textContent = currentPair.emoji_a;
-  document.getElementById('name-a').textContent = currentPair.name_a;
-  document.getElementById('cat-a').textContent = currentPair.cat_a;
-  document.getElementById('emoji-b').textContent = currentPair.emoji_b;
-  document.getElementById('name-b').textContent = currentPair.name_b;
-  document.getElementById('cat-b').textContent = currentPair.cat_b;
-  document.getElementById('score-a').innerHTML = `${currentPair.score_a}<span class="score-label">/100 notoriété</span>`;
-  document.getElementById('score-b').innerHTML = `${currentPair.score_b}<span class="score-label">/100 notoriété</span>`;
-  document.getElementById('q-counter').textContent = `Question ${questionIndex + 1} / ${pairs.length}`;
+  // Mode infini : recycler les paires quand on les a toutes
+  if(infiniteMode && questionIndex >= pairs.length) {
+    pairs = shuffle(getFilteredPairs());
+    questionIndex = 0;
+  }
+  answered=false; currentPair=pairs[questionIndex];
+  const cA=document.getElementById('card-a'), cB=document.getElementById('card-b');
+  cA.className='card'; cB.className='card';
+  cA.onclick=()=>choose('A'); cB.onclick=()=>choose('B');
+  document.getElementById('score-a').className='score-reveal';
+  document.getElementById('score-b').className='score-reveal';
+  document.getElementById('result-box').className='result-box';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('result-explanation').innerHTML='<div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>';
+  document.getElementById('emoji-a').textContent=currentPair.emoji_a;
+  document.getElementById('name-a').textContent=currentPair.name_a;
+  document.getElementById('cat-a').textContent=currentPair.cat_a;
+  document.getElementById('emoji-b').textContent=currentPair.emoji_b;
+  document.getElementById('name-b').textContent=currentPair.name_b;
+  document.getElementById('cat-b').textContent=currentPair.cat_b;
+  document.getElementById('score-a').innerHTML=`${currentPair.score_a}<span class="score-label">/100 notoriété</span>`;
+  document.getElementById('score-b').innerHTML=`${currentPair.score_b}<span class="score-label">/100 notoriété</span>`;
+  const qNum = questionIndex+1;
+  document.getElementById('q-counter').textContent = infiniteMode ? `Question ${qNum}` : `Question ${qNum} / ${pairs.length}`;
 }
 
 function choose(choice) {
-  if (answered) return; answered = true;
-  const correct = choice === currentPair.winner;
-  const cA = document.getElementById('card-a'), cB = document.getElementById('card-b');
+  if(answered)return; answered=true;
+  const correct=choice===currentPair.winner;
+  const cA=document.getElementById('card-a'), cB=document.getElementById('card-b');
   cA.classList.add('disabled'); cB.classList.add('disabled');
-  cA.onclick = null; cB.onclick = null;
+  cA.onclick=null; cB.onclick=null;
   document.getElementById('score-a').classList.add('show');
   document.getElementById('score-b').classList.add('show');
-  const wC = currentPair.winner === 'A' ? cA : cB;
-  const lC = currentPair.winner === 'A' ? cB : cA;
+  const wC=currentPair.winner==='A'?cA:cB, lC=currentPair.winner==='A'?cB:cA;
   wC.classList.add('winner'); lC.classList.add('loser');
-  if (correct) {
-    correctCount++; streak++;
-    if (streak > bestStreak) bestStreak = streak;
-    const m = streak >= 8 ? 2.5 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1;
-    score += Math.round(10 * m);
-    if (streak > 1) confetti();
-  } else { streak = 0; }
+  if(correct){correctCount++;streak++;if(streak>bestStreak)bestStreak=streak;const m=streak>=8?2.5:streak>=5?2:streak>=3?1.5:1;score+=Math.round(10*m);if(streak>1)confetti();}
+  else{streak=0;}
   updateScore();
-  const rs = document.getElementById('result-status');
-  rs.textContent = correct ? '✅ Bonne réponse !' : '❌ Raté...';
-  rs.className = 'result-status ' + (correct ? 'correct' : 'wrong');
+  const rs=document.getElementById('result-status');
+  rs.textContent=correct?'✅ Bonne réponse !':'❌ Raté...';
+  rs.className='result-status '+(correct?'correct':'wrong');
   document.getElementById('result-box').classList.add('show');
-  setTimeout(() => { document.getElementById('result-explanation').textContent = currentPair.explanation; }, 600);
-  setTimeout(() => { document.getElementById('btn-next').classList.add('show'); }, 800);
+  setTimeout(()=>{document.getElementById('result-explanation').textContent=currentPair.explanation;},600);
+  setTimeout(()=>{document.getElementById('btn-next').classList.add('show');},800);
 }
 
 function nextQuestion() {
   questionIndex++;
-  if (questionIndex >= pairs.length) { gameOver(); return; }
+  // Fin de partie en mode fini
+  if(!infiniteMode && questionIndex >= pairs.length) { gameOver(); return; }
   loadQ();
 }
 
 function updateScore() {
-  document.getElementById('score-display').textContent = score;
-  const s = document.getElementById('streak-display');
-  s.textContent = streak; s.className = 'streak-val';
-  if (streak > 0) { void s.offsetWidth; s.className = 'streak-val pulse'; }
-  document.getElementById('correct-display').textContent = correctCount;
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('correct-display').textContent=correctCount;
+  const s=document.getElementById('streak-display');
+  s.textContent=streak; s.className='streak-val';
+  if(streak>0){void s.offsetWidth;s.className='streak-val pulse';}
 }
 
 function gameOver() {
-  document.getElementById('game-area').style.display = 'none';
-  document.getElementById('game-over').style.display = 'block';
-  document.getElementById('final-score-val').textContent = score;
-  document.getElementById('stat-correct').textContent = correctCount;
-  document.getElementById('stat-streak').textContent = bestStreak;
-  document.getElementById('stat-pct').textContent = Math.round(correctCount / pairs.length * 100) + '%';
-  document.getElementById('submit-feedback').style.display = 'none';
-  document.getElementById('pseudo-input').value = '';
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('game-over').style.display='block';
+  document.getElementById('final-score-val').textContent=score;
+  document.getElementById('stat-correct').textContent=correctCount;
+  document.getElementById('stat-streak').textContent=bestStreak;
+  document.getElementById('stat-pct').textContent=Math.round(correctCount/Math.max(questionIndex,1)*100)+'%';
+  document.getElementById('submit-feedback').style.display='none';
+  document.getElementById('pseudo-input').value='';
   confetti(40);
 }
 
-function restartGame() {
-  document.getElementById('game-over').style.display = 'none';
-  document.getElementById('game-area').style.display = 'flex';
-  startGame();
+function restartSameConfig() {
+  document.getElementById('game-over').style.display='none';
+  document.getElementById('game-area').style.display='flex';
+  launchGame();
+}
+
+function goToMenu() {
+  document.getElementById('game-over').style.display='none';
+  showTab('menu', document.querySelector('.nav-btn'));
 }
 
 // ══════════════════════════════════════
 // SUBMIT SCORE
 // ══════════════════════════════════════
 async function submitScore() {
-  const pseudo = document.getElementById('pseudo-input').value.trim();
-  if (!pseudo) { alert('Entre un pseudo !'); return; }
-  const fb = document.getElementById('submit-feedback');
-  fb.style.display = 'block'; fb.textContent = '⏳ Envoi en cours...';
+  const pseudo=document.getElementById('pseudo-input').value.trim();
+  if(!pseudo){alert('Entre un pseudo !');return;}
+  const fb=document.getElementById('submit-feedback');
+  fb.style.display='block'; fb.textContent='⏳ Envoi...';
   try {
-    await sbPost('leaderboard', { pseudo, score, correct: correctCount });
-    fb.textContent = '✅ Score soumis ! Va voir le classement 🏆';
-    fb.style.color = '#4ade80';
+    await sbPost('leaderboard',{pseudo,score,correct:correctCount});
+    fb.textContent='✅ Score soumis ! 🏆'; fb.style.color='#4ade80';
   } catch(e) {
-    fb.textContent = '❌ Erreur lors de l\'envoi.';
-    fb.style.color = '#f87171';
+    fb.textContent='❌ Erreur.'; fb.style.color='#f87171';
   }
 }
 
@@ -523,102 +732,69 @@ async function submitScore() {
 // LEADERBOARD
 // ══════════════════════════════════════
 async function loadLeaderboard() {
-  document.getElementById('lb-loading').style.display = 'block';
-  document.getElementById('lb-table').style.display = 'none';
-  document.getElementById('lb-empty').style.display = 'none';
+  document.getElementById('lb-loading').style.display='block';
+  document.getElementById('lb-table').style.display='none';
+  document.getElementById('lb-empty').style.display='none';
   try {
-    const data = await sbGet('leaderboard', 'select=*&order=score.desc&limit=20');
-    document.getElementById('lb-loading').style.display = 'none';
-    if (!data || data.length === 0) {
-      document.getElementById('lb-empty').style.display = 'block'; return;
-    }
-    const medals = ['🥇','🥈','🥉'];
-    const rankClasses = ['gold','silver','bronze'];
-    document.getElementById('lb-body').innerHTML = data.map((row, i) => `
-      <tr>
-        <td><span class="lb-rank ${rankClasses[i] || ''}">${medals[i] || (i+1)}</span></td>
-        <td><span class="lb-pseudo">${row.pseudo}</span></td>
-        <td><span class="lb-score">${row.score}</span></td>
-        <td><span class="lb-correct">${row.correct}/10 ✅</span></td>
-        <td><span class="lb-date">${new Date(row.created_at).toLocaleDateString('fr-FR')}</span></td>
-      </tr>
-    `).join('');
-    document.getElementById('lb-table').style.display = 'table';
-  } catch(e) {
-    document.getElementById('lb-loading').innerHTML = '❌ Impossible de charger le classement.';
-  }
+    const data=await sbGet('leaderboard','select=*&order=score.desc&limit=20');
+    document.getElementById('lb-loading').style.display='none';
+    if(!data||data.length===0){document.getElementById('lb-empty').style.display='block';return;}
+    const medals=['🥇','🥈','🥉']; const rc=['gold','silver','bronze'];
+    document.getElementById('lb-body').innerHTML=data.map((r,i)=>`<tr><td><span class="lb-rank ${rc[i]||''}">${medals[i]||(i+1)}</span></td><td><span class="lb-pseudo">${r.pseudo}</span></td><td><span class="lb-score">${r.score}</span></td><td><span class="lb-correct">${r.correct}/10 ✅</span></td><td><span class="lb-date">${new Date(r.created_at).toLocaleDateString('fr-FR')}</span></td></tr>`).join('');
+    document.getElementById('lb-table').style.display='table';
+  } catch(e) { document.getElementById('lb-loading').innerHTML='❌ Erreur.'; }
 }
 
 // ══════════════════════════════════════
 // ADD PAIR
 // ══════════════════════════════════════
-let selectedWinner = null;
+let selectedWinner=null;
 function setWinner(w) {
-  selectedWinner = w;
-  document.getElementById('winner-a-btn').style.borderColor = w === 'A' ? '#7c3aed' : 'var(--border)';
-  document.getElementById('winner-b-btn').style.borderColor = w === 'B' ? '#0891b2' : 'var(--border)';
-  document.getElementById('winner-a-btn').style.background = w === 'A' ? 'rgba(124,58,237,.4)' : 'rgba(124,58,237,.2)';
-  document.getElementById('winner-b-btn').style.background = w === 'B' ? 'rgba(8,145,178,.4)' : 'rgba(8,145,178,.2)';
+  selectedWinner=w;
+  document.getElementById('winner-a-btn').style.borderColor=w==='A'?'#7c3aed':'var(--border)';
+  document.getElementById('winner-b-btn').style.borderColor=w==='B'?'#0891b2':'var(--border)';
 }
-
 async function submitPair() {
-  const nameA = document.getElementById('add-name-a').value.trim();
-  const emojiA = document.getElementById('add-emoji-a').value.trim();
-  const catA = document.getElementById('add-cat-a').value.trim();
-  const nameB = document.getElementById('add-name-b').value.trim();
-  const emojiB = document.getElementById('add-emoji-b').value.trim();
-  const catB = document.getElementById('add-cat-b').value.trim();
-  const scoreA = parseInt(document.getElementById('add-score-a').value);
-  const scoreB = parseInt(document.getElementById('add-score-b').value);
-  const explanation = document.getElementById('add-explanation').value.trim();
-  const fb = document.getElementById('add-feedback');
-
-  if (!nameA || !emojiA || !catA || !nameB || !emojiB || !catB || !selectedWinner || !scoreA || !scoreB || !explanation) {
-    fb.style.display = 'block'; fb.className = 'add-feedback error';
-    fb.textContent = '⚠️ Remplis tous les champs !'; return;
+  const nA=document.getElementById('add-name-a').value.trim(), eA=document.getElementById('add-emoji-a').value.trim();
+  const cA=document.getElementById('add-cat-a').value.trim(), nB=document.getElementById('add-name-b').value.trim();
+  const eB=document.getElementById('add-emoji-b').value.trim(), cB=document.getElementById('add-cat-b').value.trim();
+  const sA=parseInt(document.getElementById('add-score-a').value), sB=parseInt(document.getElementById('add-score-b').value);
+  const exp=document.getElementById('add-explanation').value.trim();
+  const fb=document.getElementById('add-feedback');
+  if(!nA||!eA||!cA||!nB||!eB||!cB||!selectedWinner||!sA||!sB||!exp){
+    fb.style.display='block';fb.className='add-feedback error';fb.textContent='⚠️ Remplis tous les champs !';return;
   }
-
-  const btn = document.getElementById('btn-add');
-  btn.disabled = true; btn.textContent = '⏳ Ajout en cours...';
-
+  const btn=document.getElementById('btn-add');
+  btn.disabled=true;btn.textContent='⏳ Ajout...';
   try {
-    await sbPost('pairs', {
-      name_a: nameA, emoji_a: emojiA, cat_a: catA,
-      name_b: nameB, emoji_b: emojiB, cat_b: catB,
-      winner: selectedWinner, score_a: scoreA, score_b: scoreB,
-      explanation
-    });
-    fb.style.display = 'block'; fb.className = 'add-feedback success';
-    fb.textContent = '✅ Paire ajoutée ! Elle apparaîtra dans le jeu dès la prochaine partie.';
-    // Reset form
-    ['add-name-a','add-emoji-a','add-cat-a','add-name-b','add-emoji-b','add-cat-b','add-score-a','add-score-b','add-explanation'].forEach(id => document.getElementById(id).value = '');
-    selectedWinner = null;
-    setWinner(null);
-    allPairs = await sbGet('pairs', 'select=*');
+    await sbPost('pairs',{name_a:nA,emoji_a:eA,cat_a:cA,name_b:nB,emoji_b:eB,cat_b:cB,winner:selectedWinner,score_a:sA,score_b:sB,explanation:exp});
+    fb.style.display='block';fb.className='add-feedback success';fb.textContent='✅ Paire ajoutée !';
+    ['add-name-a','add-emoji-a','add-cat-a','add-name-b','add-emoji-b','add-cat-b','add-score-a','add-score-b','add-explanation'].forEach(id=>document.getElementById(id).value='');
+    selectedWinner=null;setWinner(null);
+    allPairs=await sbGet('pairs','select=*');
+    buildCatGrid();
   } catch(e) {
-    fb.style.display = 'block'; fb.className = 'add-feedback error';
-    fb.textContent = '❌ Erreur lors de l\'ajout. Réessaie.';
+    fb.style.display='block';fb.className='add-feedback error';fb.textContent='❌ Erreur.';
   }
-  btn.disabled = false; btn.textContent = '🚀 Ajouter la paire';
+  btn.disabled=false;btn.textContent='🚀 Ajouter la paire';
 }
 
 // ══════════════════════════════════════
 // CONFETTI
 // ══════════════════════════════════════
-function confetti(n = 15) {
-  const c = ['#f472b6','#a78bfa','#38bdf8','#fbbf24','#4ade80','#fb923c'];
-  for (let i = 0; i < n; i++) setTimeout(() => {
-    const e = document.createElement('div');
-    e.className = 'confetti-piece';
-    e.style.cssText = `left:${Math.random()*100}vw;background:${c[~~(Math.random()*c.length)]};width:${8+Math.random()*8}px;height:${8+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s`;
-    document.body.appendChild(e); setTimeout(() => e.remove(), 4000);
-  }, i * 50);
+function confetti(n=15) {
+  const c=['#f472b6','#a78bfa','#38bdf8','#fbbf24','#4ade80','#fb923c'];
+  for(let i=0;i<n;i++)setTimeout(()=>{
+    const e=document.createElement('div');e.className='confetti-piece';
+    e.style.cssText=`left:${Math.random()*100}vw;background:${c[~~(Math.random()*c.length)]};width:${8+Math.random()*8}px;height:${8+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s`;
+    document.body.appendChild(e);setTimeout(()=>e.remove(),4000);
+  },i*50);
 }
 
 // ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
-loadPairs();
+loadAllPairs();
 </script>
 </body>
 </html>
