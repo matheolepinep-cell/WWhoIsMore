@@ -343,12 +343,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
       <h3>Quelle Année ?</h3>
       <p>Devine l'année de l'événement !</p>
     </div>
-    <div class="gc" style="opacity:.5;cursor:not-allowed">
-      <span class="ge">🔜</span>
-      <h3>Bientôt...</h3>
-      <p>D'autres jeux arrivent !</p>
-    </div>
-  </div>
+    <div class="gc" onclick="showTab('multi',null)">
+  <span class="ge">👥</span>
+  <h3>Multijoueur</h3>
+  <p>Jusqu'à 8 joueurs en temps réel !</p>
 </div>
 
 <!-- MENU SOLO (Famous + Richer) -->
@@ -500,7 +498,50 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
     <div class="GOB"><button class="BR" onclick="restartYear()">🔄 Rejouer</button><button class="BH" onclick="goHome()">🏠 Accueil</button></div>
   </div>
 </div>
-
+<!-- MULTI -->
+<div class="page" id="page-multi">
+  <div class="MSC active" id="ms-choice">
+    <div style="text-align:center;width:100%"><h1 class="BT">👥 Multi</h1><p class="sub">Jusqu'à 8 joueurs !</p></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;margin-top:6px">
+      <div class="mc" onclick="showMS('ms-create')"><span class="me">✨</span><h3>Créer</h3><p>Lance une partie</p></div>
+      <div class="mc" onclick="showMS('ms-join')"><span class="me">🔑</span><h3>Rejoindre</h3><p>Entre un code</p></div>
+    </div>
+    <button class="BS" onclick="showTab('home',null)">← Retour</button>
+  </div>
+  <div class="MSC" id="ms-create">
+    <div style="text-align:center;width:100%"><h1 class="BT">✨ Créer</h1></div>
+    <input class="IF" id="host-pseudo" placeholder="Ton pseudo..." maxlength="20">
+    <div style="width:100%"><div class="st">📂 Catégories</div><div class="cg" id="cg-multi"></div><div class="ca"><button class="bs" onclick="selAllM()">✅ Tout</button><button class="bs" onclick="deselAllM()">❌ Aucun</button></div></div>
+    <div style="width:100%"><div class="st">🔢 Manches</div><div class="sw"><div class="sl"><span>Manches</span><span class="sv" id="multi-rv">5</span></div><input type="range" id="multi-rs" min="1" max="20" step="1" value="5" oninput="uMR(this.value)"><div class="st2"><span>1</span><span>5</span><span>10</span><span>15</span><span>20</span></div></div></div>
+    <div style="width:100%"><div class="st">⏱️ Chrono</div><div class="sw"><div class="sl"><span>Durée</span><span class="sv" id="multi-cv">30s</span></div><input type="range" id="multi-cs" min="10" max="60" step="10" value="30" oninput="uMC(this.value)"><div class="st2"><span>10s</span><span>20s</span><span>30s</span><span>40s</span><span>50s</span><span>60s</span></div></div></div>
+    <button class="BP" onclick="createRoom()">✨ Créer</button>
+    <div class="EM" id="create-err"></div>
+    <button class="BS" onclick="showMS('ms-choice')">← Retour</button>
+  </div>
+  <div class="MSC" id="ms-join">
+    <div style="text-align:center;width:100%"><h1 class="BT">🔑 Rejoindre</h1></div>
+    <input class="IF" id="join-pseudo" placeholder="Ton pseudo..." maxlength="20">
+    <input class="IF CI" id="join-code" placeholder="CODE" maxlength="4" oninput="this.value=this.value.toUpperCase()">
+    <button class="BP" onclick="joinRoom()">🚀 Rejoindre</button>
+    <div class="EM" id="join-err"></div>
+    <button class="BS" onclick="showMS('ms-choice')">← Retour</button>
+  </div>
+  <div class="MSC" id="ms-lobby-host">
+    <div style="text-align:center;width:100%"><h1 class="BT">⏳ Lobby</h1></div>
+    <div class="CD"><div class="CL">Code</div><div class="CV" id="lobby-code-host">----</div><div class="CH">Partage ce code !</div></div>
+    <div class="LB"><div class="LT">👥 Joueurs (<span id="pc-host">1</span>/8)</div><div class="PL" id="ll-host"></div></div>
+    <div class="LS2" id="ls-host">En attente...</div>
+    <button class="BG" onclick="hostStartGame()">🚀 Lancer !</button>
+    <button class="BS" onclick="leaveRoom()">❌ Annuler</button>
+  </div>
+  <div class="MSC" id="ms-lobby-guest">
+    <div style="text-align:center;width:100%"><h1 class="BT">⏳ Attente</h1></div>
+    <div class="CD"><div class="CL">Code</div><div class="CV" id="lobby-code-guest">----</div><div class="CH">L'hôte va lancer...</div></div>
+    <div class="LB"><div class="LT">👥 Joueurs (<span id="pc-guest">1</span>/8)</div><div class="PL" id="ll-guest"></div></div>
+    <button class="BS" onclick="leaveRoom()">❌ Quitter</button>
+  </div>
+</div>
+    
 <!-- LEADERBOARD -->
 <div class="page" id="page-lb">
   <div class="LBH"><h2>🏆 Classement</h2><p>Les meilleurs cerveaux</p></div>
@@ -601,6 +642,7 @@ function showTab(name,btn){
   if(name==='ach')renderAch();
   if(name==='add')buildAllGrids();
   if(name==='admin'){document.getElementById('admin-login-box').style.display=adminLogged?'none':'flex';document.getElementById('admin-content').style.display=adminLogged?'block':'none';if(adminLogged)loadPending();}
+  if(name==='multi')buildMultiGrid();
 }
 function showMS(id){document.querySelectorAll('#page-multi .MSC').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
 function showDuelScreen(id){document.querySelectorAll('#page-duel .MSC').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
@@ -903,7 +945,20 @@ async function gameOver(){
   document.getElementById('fsv').textContent=score;document.getElementById('st-c').textContent=correct;
   document.getElementById('st-s').textContent=bestStreak;document.getElementById('st-p').textContent=Math.round(correct/Math.max(pairs.length,1)*100)+'%';
   document.getElementById('sfb').style.display='none';
-  document.getElementById('duel-podium').style.display='none';document.getElementById('multi-podium').style.display='none';document.getElementById('solo-submit').style.display='block';
+  document.getElementById('duel-podium').style.display='none';document.getElementById('multi-podium').style.display='none';if(gameMode==='multi'){
+  sbGet('room_players','room_code=eq.'+roomCode+'&select=*&order=score.desc').then(function(players){
+    var medals=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣'];
+    document.getElementById('mpodium-list').innerHTML=players.map(function(p,i){return '<div class="mprow '+(p.pseudo===myPseudo?'me':'')+'"><span class="mprank">'+(medals[i]||i+1)+'</span><span class="mpname">'+p.pseudo+(p.pseudo===myPseudo?' 👈':'')+'</span><div><span class="mpscore">'+p.score+'pts</span><span class="mpcorrect">'+p.correct+'/'+pairs.length+' ✅</span></div></div>';}).join('');
+    document.getElementById('multi-podium').style.display='block';
+    document.getElementById('solo-submit').style.display='none';
+    document.getElementById('duel-podium').style.display='none';
+    sbDelete('room_players','room_code=eq.'+roomCode+'&pseudo=eq.'+myPseudo);
+  });
+} else {
+  document.getElementById('multi-podium').style.display='none';
+  document.getElementById('duel-podium').style.display='none';
+  document.getElementById('solo-submit').style.display='block';
+}
   var extras={};if(currentGame==='richer')extras.richerCorrect=correct;
   updateStats(score,correct,bestStreak,pairs.length,catKey,extras);
   confetti(40);
@@ -1056,7 +1111,142 @@ function confetti(n){
   n=n||15;var c=['#f472b6','#a78bfa','#38bdf8','#fbbf24','#4ade80','#fb923c'];
   for(var i=0;i<n;i++)(function(i){setTimeout(function(){var e=document.createElement('div');e.className='confetti-piece';e.style.cssText='left:'+Math.random()*100+'vw;background:'+c[Math.floor(Math.random()*c.length)]+';width:'+(8+Math.random()*8)+'px;height:'+(8+Math.random()*8)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+(1.5+Math.random()*2)+'s;animation-delay:'+(Math.random()*.5)+'s';document.body.appendChild(e);setTimeout(function(){e.remove();},4000);},i*50);})(i);
 }
+// MULTI
+var selMulti=new Set(),multiR=5,multiC=30;
+function uMR(v){multiR=parseInt(v);document.getElementById('multi-rv').textContent=v;}
+function uMC(v){multiC=parseInt(v);document.getElementById('multi-cv').textContent=v+'s';}
+function selAllM(){document.querySelectorAll('#cg-multi .cb').forEach(function(b){b.classList.add('sel');selMulti.add(b.dataset.group);});}
+function deselAllM(){document.querySelectorAll('#cg-multi .cb').forEach(function(b){b.classList.remove('sel');selMulti.delete(b.dataset.group);});}
+function buildMultiGrid(){selMulti=new Set();buildGrid('cg-multi',selMulti,'famous');}
 
+async function createRoom(){
+  var pseudo=document.getElementById('host-pseudo').value.trim();
+  var err=document.getElementById('create-err');
+  if(!pseudo){err.textContent='⚠️ Entre un pseudo !';return;}
+  if(!selMulti.size){err.textContent='⚠️ Sélectionne une catégorie !';return;}
+  var f=filtP(selMulti,'famous');if(!f.length){err.textContent='⚠️ Aucune paire !';return;}
+  myPseudo=pseudo;gameMode='multi';isHost=true;
+  roomCode=genCode();
+  var gp=shuffle(f).slice(0,Math.min(multiR,f.length));
+  pairs=gp;chronoDur=multiC;catKey=null;
+  await sbPost('rooms',{code:roomCode,status:'waiting',host_pseudo:pseudo,rounds:multiR,current_question:0,pair_ids:gp.map(function(p){return p.id;}),chrono:multiC});
+  await sbPost('room_players',{room_code:roomCode,pseudo:pseudo,score:0,correct:0,streak:0,answered:false,reaction:''});
+  document.getElementById('lobby-code-host').textContent=roomCode;
+  showMS('ms-lobby-host');startLobbyPoll();
+}
+
+async function joinRoom(){
+  var pseudo=document.getElementById('join-pseudo').value.trim();
+  var code=document.getElementById('join-code').value.trim().toUpperCase();
+  var err=document.getElementById('join-err');
+  if(!pseudo||!code){err.textContent='⚠️ Remplis les champs !';return;}
+  var rooms=await sbGet('rooms','code=eq.'+code+'&select=*');
+  if(!rooms||!rooms.length){err.textContent='❌ Code invalide !';return;}
+  var room=rooms[0];
+  if(room.status==='playing'){err.textContent='❌ Partie en cours !';return;}
+  if(room.status==='finished'||room.status==='cancelled'){err.textContent='❌ Partie terminée !';return;}
+  var players=await sbGet('room_players','room_code=eq.'+code+'&select=*');
+  if(players.length>=8){err.textContent='❌ Partie pleine !';return;}
+  myPseudo=pseudo;roomCode=code;gameMode='multi';isHost=false;
+  var allP=await sbGet('pairs','select=*');
+  pairs=room.pair_ids.map(function(id){return allP.find(function(p){return p.id===id;});}).filter(Boolean);
+  chronoDur=room.chrono||30;catKey=null;
+  await sbPost('room_players',{room_code:code,pseudo:pseudo,score:0,correct:0,streak:0,answered:false,reaction:''});
+  document.getElementById('lobby-code-guest').textContent=code;
+  showMS('ms-lobby-guest');startLobbyPoll();
+}
+
+function genCode(){return Math.random().toString(36).substring(2,6).toUpperCase();}
+
+function startLobbyPoll(){
+  pollInt=setInterval(async function(){
+    var players=await sbGet('room_players','room_code=eq.'+roomCode+'&select=*&order=created_at.asc');
+    renderLobby(players);
+    if(!isHost){
+      var rooms=await sbGet('rooms','code=eq.'+roomCode+'&select=status');
+      if(rooms&&rooms[0]&&rooms[0].status==='playing'){clearInterval(pollInt);startMultiGameUI();}
+    }
+  },2000);
+}
+
+function renderLobby(players){
+  var medals=['👑','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣'];
+  var html=players.map(function(p,i){return '<div class="PI"><span class="PA">'+medals[i]+'</span><span class="PN">'+p.pseudo+'</span>'+(i===0?'<span class="PB host">Hôte</span>':'<span class="PB ready">✅</span>')+'</div>';}).join('');
+  var lh=document.getElementById('ll-host'),lg=document.getElementById('ll-guest');
+  if(lh)lh.innerHTML=html;if(lg)lg.innerHTML=html;
+  var ph=document.getElementById('pc-host'),pg=document.getElementById('pc-guest');
+  if(ph)ph.textContent=players.length;if(pg)pg.textContent=players.length;
+  var st=document.getElementById('ls-host');
+  if(st)st.textContent=players.length<2?'En attente d\'un autre joueur...':players.length+' joueur(s) — prêt !';
+}
+
+async function hostStartGame(){
+  clearInterval(pollInt);
+  await sbPatch('rooms','code=eq.'+roomCode,{status:'playing',current_question:0});
+  startMultiGameUI();
+}
+
+async function leaveRoom(){
+  clearInterval(pollInt);
+  await sbDelete('room_players','room_code=eq.'+roomCode+'&pseudo=eq.'+myPseudo);
+  if(isHost)await sbPatch('rooms','code=eq.'+roomCode,{status:'cancelled'});
+  roomCode='';gameMode='solo';showMS('ms-choice');showTab('multi',null);
+}
+
+function startMultiGameUI(){
+  clearInterval(pollInt);
+  document.getElementById('game-title-bar').textContent='🌍 Who\\'s More Famous?';
+  currentGame='famous';
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('page-game').classList.add('active');
+  document.querySelector('.nb').classList.add('active');
+  document.getElementById('gl').style.display='none';
+  document.getElementById('ga').style.display='flex';
+  document.getElementById('GO').style.display='none';
+  qIdx=0;score=0;streak=0;bestStreak=0;correct=0;answered=false;
+  document.getElementById('mb').style.display='flex';
+  document.getElementById('mode-badge').textContent='👥 '+roomCode;
+  document.getElementById('ls3').style.display='block';
+  document.getElementById('reactions-bar').className='reactions-bar';
+  document.getElementById('total-d').textContent=' /'+pairs.length;
+  updateScore();loadQ();
+  startGamePoll();
+}
+
+function startGamePoll(){
+  pollInt=setInterval(async function(){
+    var players=await sbGet('room_players','room_code=eq.'+roomCode+'&select=*&order=score.desc');
+    renderLiveScores(players);checkReactions(players);
+    if(!isHost){
+      var rooms=await sbGet('rooms','code=eq.'+roomCode+'&select=current_question,status');
+      if(rooms&&rooms[0]){
+        if(rooms[0].status==='finished'){clearInterval(pollInt);gameOver();return;}
+        if(rooms[0].current_question>qIdx){qIdx=rooms[0].current_question;if(qIdx>=pairs.length){clearInterval(pollInt);gameOver();return;}loadQ();}
+      }
+    }
+    if(isHost&&answered){
+      var allDone=players.every(function(p){return p.answered;});
+      if(allDone){document.getElementById('wb').style.display='none';document.getElementById('bn').classList.add('show');}
+    }
+  },1500);
+}
+
+function renderLiveScores(players){
+  var medals=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣'];
+  document.getElementById('lsl').innerHTML=players.map(function(p,i){return '<div class="LR"><span class="LRK">'+(medals[i]||i+1)+'</span><span class="LRN">'+p.pseudo+(p.pseudo===myPseudo?' 👈':'')+'</span><span class="LRS">'+p.score+'pts</span><span class="LD '+(p.answered?'done':'waiting')+'"></span></div>';}).join('');
+}
+
+function nextQuestion(){
+  if(gameMode==='multi'&&isHost){
+    var nq=qIdx+1;
+    sbGet('room_players','room_code=eq.'+roomCode+'&select=pseudo').then(function(players){
+      players.forEach(function(p){sbPatch('room_players','room_code=eq.'+roomCode+'&pseudo=eq.'+p.pseudo,{answered:false,reaction:''}); });
+      if(nq>=pairs.length){sbPatch('rooms','code=eq.'+roomCode,{status:'finished',current_question:nq});gameOver();}
+      else{sbPatch('rooms','code=eq.'+roomCode,{current_question:nq});qIdx=nq;loadQ();}
+    });
+  } else {qIdx++;if(qIdx>=pairs.length){gameOver();return;}loadQ();}
+}
+  
 if(location.hash==='#admin'){document.querySelector('.nav').insertAdjacentHTML('beforeend','<button class="nb" onclick="showTab(\'admin\',this)">🔐</button>');}
 
 // INIT
